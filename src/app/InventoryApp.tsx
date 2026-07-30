@@ -3921,8 +3921,15 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
   const handleClickNotif = (n: NotificationEntry) => {
     setNotifications((prev) => prev.map((x) => x.id === n.id ? { ...x, read: true } : x));
     setShowNotifDrawer(false);
+
     const item = items.find((i) => i.id === n.productId);
-    if (item) setDetailItem(item);
+    if (!item) return;
+
+    setDetailItem(null);
+    setActiveTab("items");
+    setInventoryStatusFilter("All Status");
+    setInventoryPreFilter(item.sku || item.name);
+    setCurrentPage("inventory");
   };
 
   // Modal states
