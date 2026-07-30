@@ -320,10 +320,10 @@ function ProductAvatar({ name, size = "md" }: { name: string; size?: "sm" | "md"
 
 function FilterChip({ label, value, onRemove }: { label: string; value: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 bg-[#eef2f7] text-[#315eba] rounded-full text-xs font-medium">
-      <span className="text-[#315eba]/60">{label}:</span>
+    <span className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 bg-[#F2F5FF] text-[#4F6FD8] rounded-full text-xs font-medium">
+      <span className="text-[#4F6FD8]/60">{label}:</span>
       {value}
-      <button onClick={onRemove} className="ml-0.5 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#315eba]/10 transition-colors">
+      <button onClick={onRemove} className="ml-0.5 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#4F6FD8]/10 transition-colors">
         <X size={10} />
       </button>
     </span>
@@ -364,7 +364,7 @@ function SelectDropdown({
         <div className="absolute z-30 top-full mt-1 left-0 min-w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 max-h-56 overflow-y-auto">
           {options.map((opt) => (
             <button key={opt} onClick={() => { onChange(opt); setOpen(false); }}
-              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors ${opt === value ? "text-[#315eba] font-medium" : "text-gray-700"}`}>
+              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors ${opt === value ? "text-[#4F6FD8] font-medium" : "text-gray-700"}`}>
               {opt}
             </button>
           ))}
@@ -399,7 +399,7 @@ function TextInput({ value, onChange, placeholder, type = "text", readOnly, erro
       className={`w-full px-3 py-2 border rounded-lg text-sm transition-all focus:outline-none ${
         readOnly ? "bg-gray-50 border-gray-100 text-gray-600 cursor-default"
           : error ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
-          : "border-gray-200 focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10"
+          : "border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"
       }`}
     />
   );
@@ -434,8 +434,8 @@ function Pagination({ total, page, perPage, onPage }: {
 }
 
 function SortIcon({ dir }: { dir: SortDir }) {
-  if (dir === "asc") return <ChevronUp size={12} className="text-[#315eba]" />;
-  if (dir === "desc") return <ChevronDown size={12} className="text-[#315eba]" />;
+  if (dir === "asc") return <ChevronUp size={12} className="text-[#4F6FD8]" />;
+  if (dir === "desc") return <ChevronDown size={12} className="text-[#4F6FD8]" />;
   return <ChevronsUpDown size={12} className="text-gray-300" />;
 }
 
@@ -483,7 +483,7 @@ function ClinicInventoryForm({ fields, onChange, errors = {}, readOnlyQuantity =
       <FormField label="Internal Note">
         <textarea value={fields.internalNote} onChange={(e) => set("internalNote")(e.target.value)}
           placeholder="Any notes visible only to your clinic..." rows={2}
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 transition-all resize-none" />
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 transition-all resize-none" />
       </FormField>
     </div>
   );
@@ -539,7 +539,7 @@ function AdjustQuantityModal({ item, onClose, onSave }: {
   const modeBtn = (m: AdjustMode, label: string, icon: React.ReactNode) => (
     <button onClick={() => { setMode(m); setValue(""); setErrors({}); }}
       className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium rounded-lg transition-colors ${
-        mode === m ? "bg-[#315eba] text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"}`}>
+        mode === m ? "bg-[#4F6FD8] text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"}`}>
       {icon}{label}
     </button>
   );
@@ -578,9 +578,9 @@ function AdjustQuantityModal({ item, onClose, onSave }: {
           {/* Preview */}
           {previewQty !== null && !errors.value && (
             <div className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm ${
-              previewQty < 0 ? "bg-red-50 border border-red-100" : "bg-[#eef2f7] border border-[#315eba]/10"}`}>
+              previewQty < 0 ? "bg-red-50 border border-red-100" : "bg-[#F2F5FF] border border-[#4F6FD8]/10"}`}>
               <span className="text-gray-600">New quantity will be</span>
-              <span className={`font-bold text-base ${previewQty < 0 ? "text-red-600" : "text-[#315eba]"}`}>{previewQty} {item.unit}</span>
+              <span className={`font-bold text-base ${previewQty < 0 ? "text-red-600" : "text-[#4F6FD8]"}`}>{previewQty} {item.unit}</span>
             </div>
           )}
 
@@ -597,7 +597,7 @@ function AdjustQuantityModal({ item, onClose, onSave }: {
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
-          <button onClick={handleSave} className="px-4 py-2 text-sm bg-[#315eba] text-white rounded-lg hover:bg-[#2649a0] transition-colors font-medium">Save Adjustment</button>
+          <button onClick={handleSave} className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Save Adjustment</button>
         </div>
       </div>
     </div>
@@ -670,7 +670,7 @@ function EditInventoryModal({ item, onClose, onSave }: {
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end flex-shrink-0">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
-          <button onClick={handleSave} className="px-4 py-2 text-sm bg-[#315eba] text-white rounded-lg hover:bg-[#2649a0] transition-colors font-medium">Save Changes</button>
+          <button onClick={handleSave} className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Save Changes</button>
         </div>
       </div>
     </div>
@@ -752,9 +752,9 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
                 const alreadyIn = list.items.some((li) => targets.some((t) => t.name === li.name));
                 return (
                   <label key={list.id}
-                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${selected.has(list.id) ? "bg-[#eef2f7]" : "hover:bg-gray-50"}`}>
+                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${selected.has(list.id) ? "bg-[#F2F5FF]" : "hover:bg-gray-50"}`}>
                     <input type="checkbox" checked={selected.has(list.id)} onChange={() => toggle(list.id)}
-                      className="w-4 h-4 rounded border-gray-300 text-[#315eba] focus:ring-[#315eba]/30" />
+                      className="w-4 h-4 rounded border-gray-300 text-[#4F6FD8] focus:ring-[#4F6FD8]/30" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">{list.name}</p>
                       <p className="text-xs text-gray-400">{list.items.length} items</p>
@@ -770,13 +770,13 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
                   <input autoFocus type="text" value={newName} onChange={(e) => setNewName(e.target.value)}
                     placeholder="New list name..."
                     onKeyDown={(e) => e.key === "Enter" && handleCreateList()}
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10" />
-                  <button onClick={handleCreateList} className="px-3 py-2 bg-[#315eba] text-white rounded-lg text-sm font-medium hover:bg-[#2649a0] transition-colors">OK</button>
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10" />
+                  <button onClick={handleCreateList} className="px-3 py-2 bg-[#4F6FD8] text-white rounded-lg text-sm font-medium hover:bg-[#3F5FC2] transition-colors">OK</button>
                   <button onClick={() => setCreating(false)} className="px-3 py-2 text-gray-500 hover:bg-gray-100 rounded-lg text-sm transition-colors">✕</button>
                 </div>
               ) : (
                 <button onClick={() => setCreating(true)}
-                  className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-[#315eba] hover:bg-[#eef2f7] rounded-xl transition-colors">
+                  className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-[#4F6FD8] hover:bg-[#F2F5FF] rounded-xl transition-colors">
                   <Plus size={15} /> Create New Purchase List
                 </button>
               )}
@@ -784,7 +784,7 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
             <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
               <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
               <button onClick={handleNext} disabled={selected.size === 0 && !(creating && newName.trim())}
-                className="px-4 py-2 text-sm bg-[#315eba] text-white rounded-lg hover:bg-[#2649a0] disabled:opacity-40 transition-colors font-medium flex items-center gap-1.5">
+                className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] disabled:opacity-40 transition-colors font-medium flex items-center gap-1.5">
                 Next <ChevronRight size={15} />
               </button>
             </div>
@@ -806,7 +806,7 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
                       type="number" min="1"
                       value={quantities[i]}
                       onChange={(e) => setQuantities((q) => ({ ...q, [i]: e.target.value }))}
-                      className="w-16 px-2 py-1.5 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10"
+                      className="w-16 px-2 py-1.5 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"
                     />
                     <span className="text-xs text-gray-400">{t.unit}</span>
                   </div>
@@ -818,7 +818,7 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
                 <ChevronLeft size={15} /> Back
               </button>
               <button onClick={handleSave}
-                className="px-4 py-2 text-sm bg-[#315eba] text-white rounded-lg hover:bg-[#2649a0] transition-colors font-medium">
+                className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">
                 Add to {selected.size > 0 ? (selected.size + " List" + (selected.size > 1 ? "s" : "")) : creating ? "New List" : "List"}
               </button>
             </div>
@@ -908,9 +908,9 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
   const tabBtn = (t: AddTab, label: string) => (
     <button onClick={() => { setTab(t); setSelectedProduct(null); setClinicFields(EMPTY_CLINIC_FIELDS); }}
       className={`px-4 py-2.5 text-sm font-medium relative transition-colors ${
-        tab === t ? "text-[#315eba]" : "text-gray-500 hover:text-gray-700"}`}>
+        tab === t ? "text-[#4F6FD8]" : "text-gray-500 hover:text-gray-700"}`}>
       {label}
-      {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#315eba] rounded-full" />}
+      {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4F6FD8] rounded-full" />}
     </button>
   );
 
@@ -943,7 +943,7 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input autoFocus type="text" placeholder="Product name, SKU, or barcode..."
                       value={query} onChange={(e) => setQuery(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10" />
+                      className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10" />
                   </div>
                   <button className="flex items-center gap-1.5 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
                     <Scan size={14} /> Scan
@@ -958,7 +958,7 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                     <p className="text-sm font-medium text-gray-500">No products found</p>
                     <p className="text-xs mt-1 mb-5 text-gray-400">"{query}" is not in the Product Library</p>
                     <button onClick={() => setTab("manual")}
-                      className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#315eba] border border-[#315eba]/30 rounded-lg hover:bg-[#315eba]/5 transition-colors">
+                      className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#4F6FD8] border border-[#4F6FD8]/30 rounded-lg hover:bg-[#4F6FD8]/5 transition-colors">
                       <Plus size={14} /> Add Product Manually
                     </button>
                   </div>
@@ -968,13 +968,13 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                       const isSelected = selectedProduct?.id === p.id;
                       return (
                         <button key={p.id} onClick={() => { setSelectedProduct(p); setClinicFields(EMPTY_CLINIC_FIELDS); }}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left group ${isSelected ? "bg-[#eef2f7]" : "hover:bg-gray-50"}`}>
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left group ${isSelected ? "bg-[#F2F5FF]" : "hover:bg-gray-50"}`}>
                           <ProductAvatar name={p.name} />
                           <div className="flex-1 min-w-0">
-                            <p className={`text-sm font-semibold truncate ${isSelected ? "text-[#315eba]" : "text-gray-900"}`}>{p.name}</p>
+                            <p className={`text-sm font-semibold truncate ${isSelected ? "text-[#4F6FD8]" : "text-gray-900"}`}>{p.name}</p>
                             <p className="text-xs text-gray-400 mt-0.5 truncate">{p.brand} · {p.category} · <span className="font-mono">{p.sku}</span></p>
                           </div>
-                          <ChevronRight size={14} className={`flex-shrink-0 ${isSelected ? "text-[#315eba]" : "text-gray-200 group-hover:text-gray-400"}`} />
+                          <ChevronRight size={14} className={`flex-shrink-0 ${isSelected ? "text-[#4F6FD8]" : "text-gray-200 group-hover:text-gray-400"}`} />
                         </button>
                       );
                     })}
@@ -1037,7 +1037,7 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
               </div>
               <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end flex-shrink-0">
                 <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
-                <button onClick={handleAdd} className="px-4 py-2 text-sm bg-[#315eba] text-white rounded-lg hover:bg-[#2649a0] transition-colors font-medium">Add to Inventory</button>
+                <button onClick={handleAdd} className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Add to Inventory</button>
               </div>
             </div>
           )}
@@ -1092,7 +1092,7 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
               {!isAlreadyInInventory && (
                 <div className="px-5 py-4 border-t border-gray-100 flex gap-2 flex-shrink-0">
                   <button onClick={() => setSelectedProduct(null)} className="flex-1 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium">Cancel</button>
-                  <button onClick={handleAdd} className="flex-1 py-2 text-sm bg-[#315eba] text-white rounded-lg hover:bg-[#2649a0] transition-colors font-medium">Add to Inventory</button>
+                  <button onClick={handleAdd} className="flex-1 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Add to Inventory</button>
                 </div>
               )}
             </div>
@@ -1194,7 +1194,7 @@ function ItemDetailsDrawer({ item, onClose, onAdjust, onEdit, onPurchase, onRemo
         <div className="px-5 py-4 border-t border-gray-100 flex-shrink-0 space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <button onClick={() => { onAdjust(item); onClose(); }}
-              className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium bg-[#315eba] text-white rounded-xl hover:bg-[#2649a0] transition-colors">
+              className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium bg-[#4F6FD8] text-white rounded-xl hover:bg-[#3F5FC2] transition-colors">
               <SlidersHorizontal size={14} /> Adjust Stock
             </button>
             <button onClick={() => { onPurchase([item]); onClose(); }}
@@ -1228,7 +1228,7 @@ function BulkActionBar({ count, onPurchase, onDeselect }: {
   count: number; onPurchase: () => void; onDeselect: () => void;
 }) {
   return (
-    <div className="flex items-center gap-4 px-4 py-3 bg-[#315eba] rounded-xl text-white">
+    <div className="flex items-center gap-4 px-4 py-3 bg-[#4F6FD8] rounded-xl text-white">
       <span className="text-sm font-medium">{count} item{count > 1 ? "s" : ""} selected</span>
       <div className="flex items-center gap-2 flex-1">
         <button onClick={onPurchase}
@@ -1344,7 +1344,7 @@ function ItemsTab({ items, initialSearch = "", initialStatusFilter = "", onSearc
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input type="text" placeholder="Product name, SKU, or barcode" value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-72 focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 bg-white" />
+            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-72 focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 bg-white" />
         </div>
         <SelectDropdown value={category} options={CATEGORIES} onChange={(v) => { setCategory(v); setPage(1); }} />
         <SelectDropdown value={stockStatus} options={STOCK_STATUSES_FILTER} onChange={(v) => { setStockStatus(v); setPage(1); }} />
@@ -1364,7 +1364,7 @@ function ItemsTab({ items, initialSearch = "", initialStatusFilter = "", onSearc
                 <tr className="border-b border-gray-100 bg-gray-50/60">
                   <th className="px-4 py-3 w-10">
                     <input type="checkbox" checked={allSelected} onChange={toggleAll}
-                      className="w-4 h-4 rounded border-gray-300 text-[#315eba] focus:ring-[#315eba]/30" />
+                      className="w-4 h-4 rounded border-gray-300 text-[#4F6FD8] focus:ring-[#4F6FD8]/30" />
                   </th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide w-10" />
                   {sortTh("Product", "name")}
@@ -1382,15 +1382,15 @@ function ItemsTab({ items, initialSearch = "", initialStatusFilter = "", onSearc
                 {paginated.map((item) => {
                   const status = computeStatus(item.quantity, item.minQuantity);
                   return (
-                    <tr key={item.id} className={`border-b border-gray-50 transition-colors ${selected.has(item.id) ? "bg-[#eef2f7]/50" : "hover:bg-gray-50/60"}`}>
+                    <tr key={item.id} className={`border-b border-gray-50 transition-colors ${selected.has(item.id) ? "bg-[#F2F5FF]/50" : "hover:bg-gray-50/60"}`}>
                       <td className="px-4 py-3">
                         <input type="checkbox" checked={selected.has(item.id)} onChange={() => toggleOne(item.id)}
-                          className="w-4 h-4 rounded border-gray-300 text-[#315eba] focus:ring-[#315eba]/30" />
+                          className="w-4 h-4 rounded border-gray-300 text-[#4F6FD8] focus:ring-[#4F6FD8]/30" />
                       </td>
                       <td className="px-4 py-3"><ProductAvatar name={item.name} /></td>
                       <td className="px-4 py-3">
-                        <button onClick={() => onViewDetail(item)} className="text-left hover:text-[#315eba] transition-colors group">
-                          <p className="text-sm font-semibold text-gray-900 group-hover:text-[#315eba] transition-colors">{item.name}</p>
+                        <button onClick={() => onViewDetail(item)} className="text-left hover:text-[#4F6FD8] transition-colors group">
+                          <p className="text-sm font-semibold text-gray-900 group-hover:text-[#4F6FD8] transition-colors">{item.name}</p>
                           <p className="text-xs text-gray-400 font-mono mt-0.5">{item.sku}</p>
                         </button>
                       </td>
@@ -1484,7 +1484,7 @@ function ActivityTab({ activity, productFilter, onClearProductFilter }: {
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input type="text" placeholder="Search product or reason" value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-60 focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 bg-white" />
+            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-60 focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 bg-white" />
         </div>
         <SelectDropdown value={productDropFilter} options={allProducts} onChange={(v) => { setProductDropFilter(v); setPage(1); }} icon={<Tag size={13} />} />
         <SelectDropdown value={typeFilter} options={typeOptions} onChange={(v) => { setTypeFilter(v); setPage(1); }} icon={<SlidersHorizontal size={13} />} />
@@ -1609,7 +1609,7 @@ function ReceiveConfirmModal({ item, onClose, onConfirm }: {
                 type="number" min="1" max={remaining}
                 value={qty}
                 onChange={(e) => { setQty(e.target.value); setError(""); }}
-                className={`w-24 px-3 py-2 border rounded-lg text-sm text-center focus:outline-none focus:ring-2 transition-all ${error ? "border-red-300 focus:border-red-400 focus:ring-red-400/10" : "border-gray-200 focus:border-[#315eba] focus:ring-[#315eba]/10"}`}
+                className={`w-24 px-3 py-2 border rounded-lg text-sm text-center focus:outline-none focus:ring-2 transition-all ${error ? "border-red-300 focus:border-red-400 focus:ring-red-400/10" : "border-gray-200 focus:border-[#4F6FD8] focus:ring-[#4F6FD8]/10"}`}
               />
               <span className="text-sm text-gray-500">{item.unit}</span>
               <span className="text-xs text-gray-400">of {remaining} remaining</span>
@@ -1633,7 +1633,7 @@ function ReceiveConfirmModal({ item, onClose, onConfirm }: {
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2">
           <button onClick={onClose} className="flex-1 py-2.5 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium border border-gray-200">Cancel</button>
           <button onClick={handleConfirm}
-            className="flex-1 py-2.5 text-sm bg-[#315eba] text-white rounded-xl hover:bg-[#2649a0] transition-colors font-medium">
+            className="flex-1 py-2.5 text-sm bg-[#4F6FD8] text-white rounded-xl hover:bg-[#3F5FC2] transition-colors font-medium">
             Confirm Receipt
           </button>
         </div>
@@ -1661,19 +1661,19 @@ function EditListModal({ list, onClose, onSave }: {
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5">List Name <span className="text-red-500">*</span></label>
             <input autoFocus type="text" value={name} onChange={(e) => { setName(e.target.value); setError(""); }}
-              className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none transition-all ${error ? "border-red-300 focus:border-red-400" : "border-gray-200 focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10"}`} />
+              className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none transition-all ${error ? "border-red-300 focus:border-red-400" : "border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"}`} />
             {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5">Notes</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 resize-none" />
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 resize-none" />
           </div>
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
           <button onClick={() => { if (!name.trim()) { setError("Required"); return; } onSave(name.trim(), notes.trim()); onClose(); }}
-            className="px-4 py-2 text-sm bg-[#315eba] text-white rounded-lg hover:bg-[#2649a0] transition-colors font-medium">Save</button>
+            className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Save</button>
         </div>
       </div>
     </div>
@@ -1761,7 +1761,7 @@ function PurchaseListDetailPage({ list, onBack, onUpdate, onDelete, onNavigateTo
     <main className="flex-1 overflow-y-auto px-8 py-6">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-400 mb-5">
-        <button onClick={onBack} className="hover:text-[#315eba] transition-colors">Purchase Lists</button>
+        <button onClick={onBack} className="hover:text-[#4F6FD8] transition-colors">Purchase Lists</button>
         <ChevronRight size={14} />
         <span className="text-gray-700 font-medium truncate">{list.name}</span>
       </nav>
@@ -1853,10 +1853,10 @@ function PurchaseListDetailPage({ list, onBack, onUpdate, onDelete, onNavigateTo
               <p className="text-sm font-semibold text-gray-700">Receiving progress</p>
               <p className="text-xs text-gray-400 mt-0.5">{receivedCount} of {total} items fully received</p>
             </div>
-            <span className="text-2xl font-bold text-[#315eba]">{pct}%</span>
+            <span className="text-2xl font-bold text-[#4F6FD8]">{pct}%</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[#315eba] rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+            <div className="h-full bg-[#4F6FD8] rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
           </div>
         </div>
       )}
@@ -1937,7 +1937,7 @@ function PurchaseListDetailPage({ list, onBack, onUpdate, onDelete, onNavigateTo
                           <div className="flex items-center justify-end gap-2">
                             {st !== "received" && (
                               <button onClick={() => setReceiveTarget(item)}
-                                className="px-3 py-1.5 text-xs font-medium text-[#315eba] border border-[#315eba]/30 rounded-lg hover:bg-[#315eba]/5 transition-colors">
+                                className="px-3 py-1.5 text-xs font-medium text-[#4F6FD8] border border-[#4F6FD8]/30 rounded-lg hover:bg-[#4F6FD8]/5 transition-colors">
                                 Receive
                               </button>
                             )}
@@ -2053,8 +2053,8 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
     {
       label: "Total Items", value: total.toLocaleString(),
       sub: "+24 from last month", subUp: true,
-      accent: "#315eba", iconBg: "#eef2f7",
-      icon: <Boxes size={17} style={{ color: "#315eba" }} />,
+      accent: "#4F6FD8", iconBg: "#F2F5FF",
+      icon: <Boxes size={17} style={{ color: "#4F6FD8" }} />,
     },
     {
       label: "Total Value",
@@ -2158,7 +2158,7 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
             ))}
           </div>
           <button onClick={onNavigateToInventory}
-            className="mt-4 text-xs font-semibold text-[#315eba] hover:text-[#2649a0] transition-colors text-center flex items-center justify-center gap-1">
+            className="mt-4 text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors text-center flex items-center justify-center gap-1">
             View Full Inventory <ArrowRight size={11} />
           </button>
         </div>
@@ -2168,7 +2168,7 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-gray-900">Usage Trend</p>
             <select value={usagePeriod} onChange={(e) => setUsagePeriod(e.target.value as "6m" | "12m" | "24m")}
-              className="text-xs bg-gray-50 border-0 rounded-lg px-2.5 py-1.5 text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#315eba]/20 cursor-pointer">
+              className="text-xs bg-gray-50 border-0 rounded-lg px-2.5 py-1.5 text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#4F6FD8]/20 cursor-pointer">
               <option value="6m">Last 6 months</option>
               <option value="12m">Last 12 months</option>
               <option value="24m">Last 24 months</option>
@@ -2179,8 +2179,8 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
               <AreaChart data={usageData} margin={{ top: 4, right: 4, bottom: 0, left: -24 }}>
                 <defs>
                   <linearGradient id="usageGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#315eba" stopOpacity={0.12} />
-                    <stop offset="100%" stopColor="#315eba" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#4F6FD8" stopOpacity={0.12} />
+                    <stop offset="100%" stopColor="#4F6FD8" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
@@ -2189,10 +2189,10 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
                 <Tooltip
                   contentStyle={{ fontSize: 12, borderRadius: 10, border: "none", boxShadow: "0 8px 24px rgba(0,0,0,0.10)", padding: "8px 12px" }}
                   labelStyle={{ fontWeight: 600, color: "#1f2937" }}
-                  cursor={{ stroke: "#315eba", strokeWidth: 1, strokeDasharray: "4 2" }}
+                  cursor={{ stroke: "#4F6FD8", strokeWidth: 1, strokeDasharray: "4 2" }}
                 />
-                <Area type="monotone" dataKey="value" stroke="#315eba" strokeWidth={2.5} fill="url(#usageGrad)"
-                  dot={false} activeDot={{ r: 4, fill: "#315eba", stroke: "#fff", strokeWidth: 2 }} />
+                <Area type="monotone" dataKey="value" stroke="#4F6FD8" strokeWidth={2.5} fill="url(#usageGrad)"
+                  dot={false} activeDot={{ r: 4, fill: "#4F6FD8", stroke: "#fff", strokeWidth: 2 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -2240,7 +2240,7 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-gray-900">Out of Stock</p>
             <button onClick={() => onNavigateWithStatusFilter("Out of Stock")}
-              className="text-xs font-semibold text-[#315eba] hover:text-[#2649a0] transition-colors flex items-center gap-0.5">
+              className="text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors flex items-center gap-0.5">
               View All <ArrowRight size={11} />
             </button>
           </div>
@@ -2267,7 +2267,7 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-gray-900">Low Stock Alerts</p>
             <button onClick={() => onNavigateWithStatusFilter("Low Stock")}
-              className="text-xs font-semibold text-[#315eba] hover:text-[#2649a0] transition-colors flex items-center gap-0.5">
+              className="text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors flex items-center gap-0.5">
               View All <ArrowRight size={11} />
             </button>
           </div>
@@ -2297,7 +2297,7 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-gray-900">Expiring Soon</p>
             <button onClick={() => onNavigateWithStatusFilter("Low Stock")}
-              className="text-xs font-semibold text-[#315eba] hover:text-[#2649a0] transition-colors flex items-center gap-0.5">
+              className="text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors flex items-center gap-0.5">
               View All <ArrowRight size={11} />
             </button>
           </div>
@@ -2332,12 +2332,12 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
 // ─── AnalyticsPage ────────────────────────────────────────────────────────────
 
 const ANLX_CAT_COLORS: Record<string, string> = {
-  Restorative: "#315eba", Disposables: "#10b981", PPE: "#f59e0b", Impression: "#8b5cf6", Anesthetics: "#ef4444",
+  Restorative: "#4F6FD8", Disposables: "#10b981", PPE: "#f59e0b", Impression: "#8b5cf6", Anesthetics: "#ef4444",
 };
 const ANLX_BREAKDOWN = [
   { name: "Disposables", value: 38, color: "#10b981" },
   { name: "PPE", value: 24, color: "#f59e0b" },
-  { name: "Restorative", value: 17, color: "#315eba" },
+  { name: "Restorative", value: 17, color: "#4F6FD8" },
   { name: "Impression", value: 12, color: "#8b5cf6" },
   { name: "Anesthetics", value: 9, color: "#ef4444" },
 ];
@@ -2382,7 +2382,7 @@ const ANLX_PRIORITY_CFG = {
   High:    { color: "#ef4444", bg: "#fef2f2", label: "High Priority",   tip: "Out of Stock: Current Quantity = 0" },
   Medium:  { color: "#f97316", bg: "#fff7ed", label: "Medium Priority", tip: "Reorder Now: Current Quantity ≤ Minimum Quantity" },
   Soon:    { color: "#f59e0b", bg: "#fffbeb", label: "Reorder Soon",    tip: "Predicted to reach Minimum Quantity within 14 days" },
-  Planned: { color: "#315eba", bg: "#eef2f7", label: "Planned",         tip: "Predicted to reach Minimum Quantity in 15–30 days" },
+  Planned: { color: "#4F6FD8", bg: "#F2F5FF", label: "Planned",         tip: "Predicted to reach Minimum Quantity in 15–30 days" },
 } as const;
 type PriorityKey = keyof typeof ANLX_PRIORITY_CFG;
 
@@ -2398,7 +2398,7 @@ function PriorityBadge({ p }: { p: string }) {
 // Static AI insight cards — mock data, coming soon
 const PRED_INSIGHTS = [
   {
-    color: "#315eba", initial: "C",
+    color: "#4F6FD8", initial: "C",
     name: "Composite A2",
     insight: "Qty is low in 8 days. Recommend ordering to avoid stockout.",
     reorder: 20,
@@ -2512,7 +2512,7 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
         <div className="flex items-center gap-2.5">
           <label className="text-sm font-medium text-gray-500">Analysis Month</label>
           <input type="month" value={analysisMonth} onChange={(e) => setAnalysisMonth(e.target.value)}
-            className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 bg-white" />
+            className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 bg-white" />
         </div>
       </div>
 
@@ -2521,8 +2521,8 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
         <div className={`${CARD} p-5`}>
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Monthly Consumption</span>
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: "#eef2f7" }}>
-              <Package size={17} style={{ color: "#315eba" }} />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: "#F2F5FF" }}>
+              <Package size={17} style={{ color: "#4F6FD8" }} />
             </div>
           </div>
           <p className="text-[1.65rem] font-bold text-gray-900 leading-none mb-1.5">406 <span className="text-base font-semibold text-gray-400">units</span></p>
@@ -2552,7 +2552,7 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
             </div>
           </div>
           <p className="text-[1.65rem] font-bold text-gray-900 leading-none mb-1.5">{reachingReorder || 18}</p>
-          <button onClick={onNavigateToInventory} className="text-xs font-medium text-[#315eba] hover:underline">
+          <button onClick={onNavigateToInventory} className="text-xs font-medium text-[#4F6FD8] hover:underline">
             View in Inventory →
           </button>
         </div>
@@ -2780,7 +2780,7 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
                       <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
                         style={{ backgroundColor: cfg.bg, color: cfg.color }}>{cfg.label}</span>
                       <button onClick={onNavigateToInventory}
-                        className="text-[11px] font-semibold text-[#315eba] hover:text-[#2649a0] transition-colors">
+                        className="text-[11px] font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors">
                         View
                       </button>
                     </div>
@@ -2789,7 +2789,7 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
               })}
             </div>
             <button onClick={onNavigateToInventory}
-              className="mt-3 w-full text-center text-xs font-semibold text-[#315eba] hover:text-[#2649a0] transition-colors pt-2 border-t border-gray-100">
+              className="mt-3 w-full text-center text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors pt-2 border-t border-gray-100">
               View all reorder priorities →
             </button>
           </div>
@@ -2891,7 +2891,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
 
   const ToggleSwitch = ({ on, onToggle }: { on: boolean; onToggle: () => void }) => (
     <button onClick={onToggle} className="relative flex-shrink-0 w-10 h-5.5 rounded-full transition-colors focus:outline-none"
-      style={{ backgroundColor: on ? "#315eba" : "#d1d5db", height: "22px", width: "40px" }}>
+      style={{ backgroundColor: on ? "#4F6FD8" : "#d1d5db", height: "22px", width: "40px" }}>
       <span className="absolute top-0.5 rounded-full bg-white shadow transition-transform"
         style={{ width: 18, height: 18, left: 2, transform: on ? "translateX(18px)" : "translateX(0)" }} />
     </button>
@@ -2914,14 +2914,14 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
       className={`w-full px-3 py-2.5 text-sm rounded-lg border transition-all focus:outline-none ${
         readOnly
           ? "bg-gray-50 border-gray-100 text-gray-500 cursor-default"
-          : "border-gray-200 focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 text-gray-900"
+          : "border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 text-gray-900"
       }`} />
   );
 
   const SaveBtn = ({ onClick, saved, label = "Save Changes" }: { onClick: () => void; saved: boolean; label?: string }) => (
     <button onClick={onClick}
       className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors"
-      style={{ backgroundColor: saved ? "#10b981" : "#315eba", color: "#fff" }}>
+      style={{ backgroundColor: saved ? "#10b981" : "#4F6FD8", color: "#fff" }}>
       {saved ? <><CheckCheck size={15} /> Saved</> : label}
     </button>
   );
@@ -2944,9 +2944,9 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
       <div className="flex items-center gap-1 mb-6 border-b border-gray-200">
         {TABS.map((t) => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-5 py-2.5 text-sm font-medium transition-colors relative ${tab === t.id ? "text-[#315eba]" : "text-gray-500 hover:text-gray-700"}`}>
+            className={`px-5 py-2.5 text-sm font-medium transition-colors relative ${tab === t.id ? "text-[#4F6FD8]" : "text-gray-500 hover:text-gray-700"}`}>
             {t.label}
-            {tab === t.id && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#315eba] rounded-full" />}
+            {tab === t.id && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4F6FD8] rounded-full" />}
           </button>
         ))}
       </div>
@@ -2979,7 +2979,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
             <div className="space-y-4">
               <SField label="Region / Country">
                 <select value={region} onChange={(e) => setRegion(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 focus:outline-none text-gray-900 bg-white">
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 focus:outline-none text-gray-900 bg-white">
                   {["United States", "Canada", "United Kingdom", "Australia", "Singapore", "Other"].map((r) => (
                     <option key={r}>{r}</option>
                   ))}
@@ -2987,7 +2987,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
               </SField>
               <SField label="Timezone">
                 <select value={timezone} onChange={(e) => setTimezone(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 focus:outline-none text-gray-900 bg-white">
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 focus:outline-none text-gray-900 bg-white">
                   {[
                     ["America/Los_Angeles", "Pacific Time (UTC−8)"],
                     ["America/Denver",      "Mountain Time (UTC−7)"],
@@ -3002,7 +3002,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
               </SField>
               <SField label="Currency">
                 <select value={currency} onChange={(e) => setCurrency(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 focus:outline-none text-gray-900 bg-white">
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 focus:outline-none text-gray-900 bg-white">
                   {["USD", "CAD", "GBP", "AUD", "SGD", "EUR"].map((c) => (
                     <option key={c}>{c}</option>
                   ))}
@@ -3058,7 +3058,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
                       <div className="flex items-center gap-2">
                         <input value={notifEmailAddr}
                           onChange={(e) => { setNotifEmailAddr(e.target.value); setNotifEmailPending(true); }}
-                          className="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 focus:outline-none text-gray-900"
+                          className="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 focus:outline-none text-gray-900"
                           placeholder="notifications@example.com" />
                       </div>
                       {notifEmailPending && (
@@ -3193,7 +3193,7 @@ function HelpPage({ onBack }: { onBack: () => void }) {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-[#315eba] transition-colors mb-4">
+          <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-[#4F6FD8] transition-colors mb-4">
             <ChevronLeft size={15} /> Back
           </button>
           <h1 className="text-2xl font-bold text-gray-900">Help & Support</h1>
@@ -3201,9 +3201,9 @@ function HelpPage({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Search hint banner */}
-        <div className="flex items-start gap-3 p-4 rounded-2xl bg-[#eef2f7] mb-6">
-          <HelpCircle size={18} className="text-[#315eba] flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-[#315eba] font-medium leading-snug">
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-[#F2F5FF] mb-6">
+          <HelpCircle size={18} className="text-[#4F6FD8] flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-[#4F6FD8] font-medium leading-snug">
             Browse the FAQs below or contact our support team directly if you need further assistance.
           </p>
         </div>
@@ -3215,7 +3215,7 @@ function HelpPage({ onBack }: { onBack: () => void }) {
               <button
                 onClick={() => setOpenIdx(openIdx === i ? null : i)}
                 className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-gray-50/60 transition-colors">
-                <span className={`text-sm font-medium leading-snug ${openIdx === i ? "text-[#315eba]" : "text-gray-800"}`}>{faq.q}</span>
+                <span className={`text-sm font-medium leading-snug ${openIdx === i ? "text-[#4F6FD8]" : "text-gray-800"}`}>{faq.q}</span>
                 <span className="flex-shrink-0 text-gray-400">
                   {openIdx === i ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </span>
@@ -3231,15 +3231,15 @@ function HelpPage({ onBack }: { onBack: () => void }) {
 
         {/* Contact support */}
         <div className={`${CARD} p-6 flex flex-col items-center text-center gap-3`}>
-          <div className="w-11 h-11 rounded-2xl bg-[#eef2f7] flex items-center justify-center">
-            <HelpCircle size={20} className="text-[#315eba]" />
+          <div className="w-11 h-11 rounded-2xl bg-[#F2F5FF] flex items-center justify-center">
+            <HelpCircle size={20} className="text-[#4F6FD8]" />
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">Still need help?</p>
             <p className="text-xs text-gray-400 mt-0.5">Our support team is happy to assist you.</p>
           </div>
           <a href="mailto:support@hexace.io"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#315eba] text-white text-sm font-semibold hover:bg-[#2649a0] transition-colors">
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4F6FD8] text-white text-sm font-semibold hover:bg-[#3F5FC2] transition-colors">
             Contact Support
           </a>
           <p className="text-xs text-gray-400">support@hexace.io</p>
@@ -3322,7 +3322,7 @@ function ImportHistoryModal({ onClose }: { onClose: () => void }) {
             onDragLeave={() => setDragging(false)}
             onDrop={handleDrop}
             onClick={() => inputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${dragging ? "border-[#315eba] bg-blue-50" : "border-gray-200 hover:border-[#315eba] hover:bg-blue-50/40"}`}
+            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${dragging ? "border-[#4F6FD8] bg-blue-50" : "border-gray-200 hover:border-[#4F6FD8] hover:bg-blue-50/40"}`}
           >
             <input
               ref={inputRef}
@@ -3332,8 +3332,8 @@ function ImportHistoryModal({ onClose }: { onClose: () => void }) {
               className="hidden"
               onChange={(e) => addFiles(e.target.files)}
             />
-            <Upload size={28} className={`mx-auto mb-3 ${dragging ? "text-[#315eba]" : "text-gray-300"}`} />
-            <p className="text-sm font-medium text-gray-700">Drop files here, or <span className="text-[#315eba]">browse</span></p>
+            <Upload size={28} className={`mx-auto mb-3 ${dragging ? "text-[#4F6FD8]" : "text-gray-300"}`} />
+            <p className="text-sm font-medium text-gray-700">Drop files here, or <span className="text-[#4F6FD8]">browse</span></p>
             <p className="text-xs text-gray-400 mt-1">PNG, JPG, JPEG, WEBP, PDF — up to 20 MB each</p>
           </div>
 
@@ -3368,7 +3368,7 @@ function ImportHistoryModal({ onClose }: { onClose: () => void }) {
           <button
             onClick={handleUpload}
             disabled={!files.length || uploading}
-            className="px-4 py-2 text-sm font-semibold text-white bg-[#315eba] rounded-lg hover:bg-[#2649a0] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+            className="px-4 py-2 text-sm font-semibold text-white bg-[#4F6FD8] rounded-lg hover:bg-[#3F5FC2] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
             {uploading ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />Uploading…</> : <><Upload size={15} />Upload {files.length > 0 ? `(${files.length})` : ""}</>}
           </button>
         </div>
@@ -3434,7 +3434,7 @@ function NewPurchaseListModal({ onClose, onCreate }: {
               placeholder="e.g. August Restock"
               className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none transition-all ${
                 error ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
-                : "border-gray-200 focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10"}`}
+                : "border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"}`}
             />
             {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
           </div>
@@ -3443,12 +3443,12 @@ function NewPurchaseListModal({ onClose, onCreate }: {
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
               placeholder="Describe what this list is for..."
               rows={3}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 transition-all resize-none" />
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 transition-all resize-none" />
           </div>
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
-          <button onClick={handleCreate} className="px-4 py-2 text-sm bg-[#315eba] text-white rounded-lg hover:bg-[#2649a0] transition-colors font-medium">
+          <button onClick={handleCreate} className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">
             Create List
           </button>
         </div>
@@ -3556,7 +3556,7 @@ function PurchaseListCard({ list, onRename, onComplete, onDelete, onOpen }: {
 
   return (
     <>
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+      <div className={`${CARD} flex flex-col`}>
         {/* Card header */}
         <div className="px-5 pt-5 pb-4">
           <div className="flex items-start justify-between gap-2 mb-3">
@@ -3586,7 +3586,7 @@ function PurchaseListCard({ list, onRename, onComplete, onDelete, onOpen }: {
 
           {/* Progress bar */}
           <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[#315eba] rounded-full transition-all duration-500"
+            <div className="h-full bg-[#4F6FD8] rounded-full transition-all duration-500"
               style={{ width: `${pct}%` }} />
           </div>
         </div>
@@ -3612,7 +3612,7 @@ function PurchaseListCard({ list, onRename, onComplete, onDelete, onOpen }: {
         {/* Footer — click to open detail */}
         <div className="border-t border-gray-50">
           <button onClick={() => onOpen(list.id)}
-            className="w-full flex items-center justify-center gap-1.5 px-5 py-3 text-xs font-medium text-[#315eba] hover:bg-[#eef2f7] transition-colors rounded-b-2xl">
+            className="w-full flex items-center justify-center gap-1.5 px-5 py-3 text-xs font-medium text-[#4F6FD8] hover:bg-[#F2F5FF] transition-colors rounded-b-2xl">
             View Items <ArrowRight size={12} />
           </button>
         </div>
@@ -3630,8 +3630,8 @@ function NewListCreatedBanner({ listName, onDismiss, onGoToInventory }: {
   listName: string; onDismiss: () => void; onGoToInventory: () => void;
 }) {
   return (
-    <div className="bg-[#eef2f7] border border-[#315eba]/20 rounded-xl px-5 py-4 flex items-center gap-4">
-      <div className="w-9 h-9 bg-[#315eba] rounded-xl flex items-center justify-center flex-shrink-0">
+    <div className="bg-[#F2F5FF] border border-[#4F6FD8]/20 rounded-xl px-5 py-4 flex items-center gap-4">
+      <div className="w-9 h-9 bg-[#4F6FD8] rounded-xl flex items-center justify-center flex-shrink-0">
         <CheckCheck size={18} className="text-white" />
       </div>
       <div className="flex-1 min-w-0">
@@ -3640,7 +3640,7 @@ function NewListCreatedBanner({ listName, onDismiss, onGoToInventory }: {
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <button onClick={onGoToInventory}
-          className="flex items-center gap-1.5 px-3 py-2 bg-[#315eba] text-white text-xs font-medium rounded-lg hover:bg-[#2649a0] transition-colors">
+          className="flex items-center gap-1.5 px-3 py-2 bg-[#4F6FD8] text-white text-xs font-medium rounded-lg hover:bg-[#3F5FC2] transition-colors">
           Browse Inventory <ArrowRight size={12} />
         </button>
         <button onClick={onDismiss} className="text-gray-400 hover:text-gray-600 transition-colors"><X size={16} /></button>
@@ -3708,7 +3708,7 @@ function PurchaseListsPage({ purchaseLists, setPurchaseLists, onNavigateToInvent
           <p className="text-sm text-gray-500 mt-1">Create and track purchase lists to manage incoming inventory</p>
         </div>
         <button onClick={() => setShowNewModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#315eba] text-white text-sm font-semibold rounded-lg hover:bg-[#2649a0] transition-colors shadow-sm">
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#4F6FD8] text-white text-sm font-semibold rounded-lg hover:bg-[#3F5FC2] transition-colors shadow-sm">
           <Plus size={16} /> New Purchase List
         </button>
       </div>
@@ -3729,12 +3729,12 @@ function PurchaseListsPage({ purchaseLists, setPurchaseLists, onNavigateToInvent
         <div className="flex items-center gap-1 border-b border-gray-200 flex-1">
           {(["Active", "Completed"] as const).map((t) => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-2.5 text-sm font-medium relative transition-colors flex items-center gap-2 ${tab === t ? "text-[#315eba]" : "text-gray-500 hover:text-gray-700"}`}>
+              className={`px-4 py-2.5 text-sm font-medium relative transition-colors flex items-center gap-2 ${tab === t ? "text-[#4F6FD8]" : "text-gray-500 hover:text-gray-700"}`}>
               {t}
-              <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${tab === t ? "bg-[#315eba]/10 text-[#315eba]" : "bg-gray-100 text-gray-400"}`}>
+              <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${tab === t ? "bg-[#4F6FD8]/10 text-[#4F6FD8]" : "bg-gray-100 text-gray-400"}`}>
                 {t === "Active" ? activeCount : completedCount}
               </span>
-              {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#315eba] rounded-full" />}
+              {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4F6FD8] rounded-full" />}
             </button>
           ))}
         </div>
@@ -3742,7 +3742,7 @@ function PurchaseListsPage({ purchaseLists, setPurchaseLists, onNavigateToInvent
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input type="text" placeholder="Search purchase lists..." value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#315eba] focus:ring-2 focus:ring-[#315eba]/10 bg-white" />
+            className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 bg-white" />
         </div>
       </div>
 
@@ -3755,7 +3755,7 @@ function PurchaseListsPage({ purchaseLists, setPurchaseLists, onNavigateToInvent
           </p>
           {!search && tab === "Active" && (
             <button onClick={() => setShowNewModal(true)}
-              className="mt-4 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#315eba] border border-[#315eba]/30 rounded-lg hover:bg-[#315eba]/5 transition-colors">
+              className="mt-4 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#4F6FD8] border border-[#4F6FD8]/30 rounded-lg hover:bg-[#4F6FD8]/5 transition-colors">
               <Plus size={14} /> Create your first list
             </button>
           )}
@@ -3827,7 +3827,7 @@ function NotificationsDrawer({ notifications, onClose, onMarkAllRead, onClickNot
             <Bell size={17} className="text-gray-700" />
             <span className="text-base font-semibold text-gray-900">Notifications</span>
             {unread > 0 && (
-              <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold text-white bg-[#315eba]">
+              <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold text-white bg-[#4F6FD8]">
                 {unread}
               </span>
             )}
@@ -3835,7 +3835,7 @@ function NotificationsDrawer({ notifications, onClose, onMarkAllRead, onClickNot
           <div className="flex items-center gap-1">
             {unread > 0 && (
               <button onClick={onMarkAllRead}
-                className="text-xs font-semibold text-[#315eba] hover:text-[#2649a0] px-2 py-1 rounded-lg hover:bg-[#eef2f7] transition-colors">
+                className="text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] px-2 py-1 rounded-lg hover:bg-[#F2F5FF] transition-colors">
                 Mark all as read
               </button>
             )}
@@ -3861,7 +3861,7 @@ function NotificationsDrawer({ notifications, onClose, onMarkAllRead, onClickNot
                 const cfg = NOTIF_CFG[n.type];
                 return (
                   <button key={n.id} onClick={() => onClickNotif(n)}
-                    className={`w-full text-left px-5 py-4 border-b border-gray-50 last:border-0 transition-colors hover:brightness-95 ${n.read ? "bg-white" : "bg-[#eef2f7]/60"}`}>
+                    className={`w-full text-left px-5 py-4 border-b border-gray-50 last:border-0 transition-colors hover:brightness-95 ${n.read ? "bg-white" : "bg-[#F2F5FF]/60"}`}>
                     <div className="flex items-start gap-3">
                       {/* Type icon */}
                       <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -3880,7 +3880,7 @@ function NotificationsDrawer({ notifications, onClose, onMarkAllRead, onClickNot
                       {/* Unread dot */}
                       <div className="flex-shrink-0 mt-1.5">
                         {!n.read ? (
-                          <span className="block w-2 h-2 rounded-full" style={{ backgroundColor: "#315eba" }} />
+                          <span className="block w-2 h-2 rounded-full" style={{ backgroundColor: "#4F6FD8" }} />
                         ) : (
                           <span className="block w-2 h-2" />
                         )}
@@ -4124,13 +4124,13 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
             </div>
             {activeTab === "items" ? (
               <button onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#315eba] text-white text-sm font-semibold rounded-lg hover:bg-[#2649a0] transition-colors shadow-sm">
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#4F6FD8] text-white text-sm font-semibold rounded-lg hover:bg-[#3F5FC2] transition-colors shadow-sm">
                 <PackagePlus size={16} /> Add Inventory Item
               </button>
             ) : (
               <button
                 onClick={() => setShowImportModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#315eba] text-white text-sm font-semibold rounded-lg hover:bg-[#2649a0] transition-colors shadow-sm">
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#4F6FD8] text-white text-sm font-semibold rounded-lg hover:bg-[#3F5FC2] transition-colors shadow-sm">
                 <Upload size={16} /> Import History
               </button>
             )}
@@ -4140,9 +4140,9 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
           <div className="flex items-center gap-1 mb-6 border-b border-gray-200">
             {(["items", "activity"] as const).map((tab) => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2.5 text-sm font-medium transition-colors relative capitalize ${activeTab === tab ? "text-[#315eba]" : "text-gray-500 hover:text-gray-700"}`}>
+                className={`px-4 py-2.5 text-sm font-medium transition-colors relative capitalize ${activeTab === tab ? "text-[#4F6FD8]" : "text-gray-500 hover:text-gray-700"}`}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                {activeTab === tab && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#315eba] rounded-full" />}
+                {activeTab === tab && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4F6FD8] rounded-full" />}
               </button>
             ))}
           </div>

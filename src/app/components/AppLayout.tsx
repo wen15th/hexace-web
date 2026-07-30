@@ -42,7 +42,7 @@ export function Sidebar({
     <aside className="sticky top-0 flex h-screen w-60 flex-shrink-0 flex-col border-r border-gray-200 bg-white">
       <div className="flex h-16 items-center border-b border-gray-100 px-6">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-[#315eba]">
+          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-[#4F6FD8]">
             <span className="text-xs font-bold text-white">H</span>
           </div>
           <div className="flex flex-col leading-tight">
@@ -61,11 +61,11 @@ export function Sidebar({
               onClick={() => onNavigate(item.id)}
               className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
                 isActive
-                  ? "bg-[#eef2f7] font-semibold text-[#315eba]"
+                  ? "bg-[#F2F5FF] font-semibold text-[#4F6FD8]"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
             >
-              <span className={isActive ? "text-[#315eba]" : "text-gray-400"}>{item.icon}</span>
+              <span className={isActive ? "text-[#4F6FD8]" : "text-gray-400"}>{item.icon}</span>
               {item.label}
             </button>
           );

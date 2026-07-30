@@ -19,7 +19,7 @@ export default function Component01InventoryItems() {
       <div className="absolute bg-white border border-[#e5e7eb] border-solid h-[1024px] left-0 top-0 w-[240px]" data-name="Sidebar" />
       <p className="[word-break:break-word] absolute font-['Inter:Semi_Bold',sans-serif] font-semibold leading-[normal] left-[32px] not-italic text-[#1f2937] text-[20px] top-[28px] whitespace-nowrap">HexaDent</p>
       <p className="[word-break:break-word] absolute font-['Inter:Regular',sans-serif] font-normal leading-[normal] left-[48px] not-italic text-[#1f2937] text-[14px] top-[104px] whitespace-nowrap">Dashboard</p>
-      <div className="absolute bg-[#eef2f7] h-[40px] left-[28px] rounded-[8px] top-[145px] w-[184px]" data-name="Rectangle" />
+      <div className="absolute bg-[#F2F5FF] h-[40px] left-[28px] rounded-[8px] top-[145px] w-[184px]" data-name="Rectangle" />
       <p className="[word-break:break-word] absolute font-['Inter:Semi_Bold',sans-serif] font-semibold leading-[normal] left-[48px] not-italic text-[#1f2937] text-[14px] top-[156px] whitespace-nowrap">Inventory</p>
       <p className="[word-break:break-word] absolute font-['Inter:Regular',sans-serif] font-normal leading-[normal] left-[48px] not-italic text-[#1f2937] text-[14px] top-[208px] whitespace-nowrap">Purchase Lists</p>
       <p className="[word-break:break-word] absolute font-['Inter:Regular',sans-serif] font-normal leading-[normal] left-[48px] not-italic text-[#1f2937] text-[14px] top-[260px] whitespace-nowrap">Analytics</p>
@@ -27,11 +27,11 @@ export default function Component01InventoryItems() {
       <div className="absolute bg-white border border-[#e5e7eb] border-solid h-[64px] left-[240px] top-0 w-[1200px]" data-name="Rectangle" />
       <p className="[word-break:break-word] absolute font-['Inter:Semi_Bold',sans-serif] font-semibold leading-[normal] left-[280px] not-italic text-[#1f2937] text-[28px] top-[94px] whitespace-nowrap">Inventory</p>
       <p className="[word-break:break-word] absolute font-['Inter:Regular',sans-serif] font-normal leading-[normal] left-[280px] not-italic text-[#6b7280] text-[14px] top-[134px] whitespace-nowrap">Manage your clinic inventory and stock levels</p>
-      <div className="absolute bg-[#315eba] h-[40px] left-[1180px] rounded-[8px] top-[96px] w-[180px]" data-name="Rectangle" />
+      <div className="absolute bg-[#4F6FD8] h-[40px] left-[1180px] rounded-[8px] top-[96px] w-[180px]" data-name="Rectangle" />
       <p className="[word-break:break-word] absolute font-['Inter:Semi_Bold',sans-serif] font-semibold leading-[normal] left-[1198px] not-italic text-[14px] text-white top-[108px] whitespace-nowrap">+ Add Inventory Item</p>
       <p className="[word-break:break-word] absolute font-['Inter:Semi_Bold',sans-serif] font-semibold leading-[normal] left-[280px] not-italic text-[#1f2937] text-[14px] top-[188px] whitespace-nowrap">Items</p>
       <p className="[word-break:break-word] absolute font-['Inter:Regular',sans-serif] font-normal leading-[normal] left-[350px] not-italic text-[#6b7280] text-[14px] top-[188px] whitespace-nowrap">Activity</p>
-      <div className="absolute bg-[#315eba] h-[3px] left-[280px] top-[216px] w-[42px]" data-name="Rectangle" />
+      <div className="absolute bg-[#4F6FD8] h-[3px] left-[280px] top-[216px] w-[42px]" data-name="Rectangle" />
       <div className="absolute bg-[#e5e7eb] h-px left-[280px] top-[220px] w-[1080px]" data-name="Rectangle" />
       <div className="absolute bg-white border border-[#d1d5db] border-solid h-[40px] left-[280px] rounded-[8px] top-[248px] w-[340px]" data-name="Rectangle" />
       <p className="[word-break:break-word] absolute font-['Inter:Regular',sans-serif] font-normal leading-[normal] left-[296px] not-italic text-[#9ca3af] text-[13px] top-[260px] whitespace-nowrap">Search by product, brand, SKU, or barcode</p>
