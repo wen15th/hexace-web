@@ -399,7 +399,7 @@ function TextInput({ value, onChange, placeholder, type = "text", readOnly, erro
       className={`w-full px-3 py-2 border rounded-lg text-sm transition-all focus:outline-none ${
         readOnly ? "bg-gray-50 border-gray-100 text-gray-600 cursor-default"
           : error ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
-          : "border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"
+          : "bg-white border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"
       }`}
     />
   );
@@ -1609,7 +1609,7 @@ function ReceiveConfirmModal({ item, onClose, onConfirm }: {
                 type="number" min="1" max={remaining}
                 value={qty}
                 onChange={(e) => { setQty(e.target.value); setError(""); }}
-                className={`w-24 px-3 py-2 border rounded-lg text-sm text-center focus:outline-none focus:ring-2 transition-all ${error ? "border-red-300 focus:border-red-400 focus:ring-red-400/10" : "border-gray-200 focus:border-[#4F6FD8] focus:ring-[#4F6FD8]/10"}`}
+                className={`w-24 px-3 py-2 border rounded-lg text-sm text-center focus:outline-none focus:ring-2 transition-all ${error ? "border-red-300 focus:border-red-400 focus:ring-red-400/10" : "bg-white border-gray-200 focus:border-[#4F6FD8] focus:ring-[#4F6FD8]/10"}`}
               />
               <span className="text-sm text-gray-500">{item.unit}</span>
               <span className="text-xs text-gray-400">of {remaining} remaining</span>
@@ -2811,9 +2811,9 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
   const [clinicInfoSaved, setClinicInfoSaved] = useState(false);
 
   // General — Regional
-  const [region, setRegion] = useState("United States");
-  const [timezone, setTimezone] = useState("America/Los_Angeles");
-  const [currency, setCurrency] = useState("USD");
+  const [region, setRegion] = useState("Canada");
+  const [timezone, setTimezone] = useState("America/Toronto");
+  const [currency, setCurrency] = useState("CAD");
   const [regionalSaved, setRegionalSaved] = useState(false);
 
   // General — Notifications: types
@@ -2914,7 +2914,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
       className={`w-full px-3 py-2.5 text-sm rounded-lg border transition-all focus:outline-none ${
         readOnly
           ? "bg-gray-50 border-gray-100 text-gray-500 cursor-default"
-          : "border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 text-gray-900"
+          : "bg-white border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 text-gray-900"
       }`} />
   );
 
@@ -2927,10 +2927,10 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
   );
 
   const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className={`${CARD} p-6 space-y-5`}>
-      <h3 className="text-sm font-semibold text-gray-900 pb-3 border-b border-gray-100">{title}</h3>
-      {children}
-    </div>
+    <section className="border-b border-gray-200 py-7 first:pt-1 last:border-b-0 last:pb-2">
+      <h3 className="mb-5 text-base font-semibold tracking-[-0.01em] text-gray-900">{title}</h3>
+      <div className="space-y-5">{children}</div>
+    </section>
   );
 
   return (
@@ -2953,7 +2953,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
 
       {/* ── GENERAL ── */}
       {tab === "general" && (
-        <div className="max-w-2xl space-y-5">
+        <div className="max-w-3xl">
 
           <Section title="Clinic Information">
             <div className="space-y-4">
@@ -2989,6 +2989,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
                 <select value={timezone} onChange={(e) => setTimezone(e.target.value)}
                   className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 focus:outline-none text-gray-900 bg-white">
                   {[
+                    ["America/Toronto",     "Toronto (Eastern Time)"],
                     ["America/Los_Angeles", "Pacific Time (UTC−8)"],
                     ["America/Denver",      "Mountain Time (UTC−7)"],
                     ["America/Chicago",     "Central Time (UTC−6)"],
@@ -3081,7 +3082,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
 
       {/* ── ACCOUNT ── */}
       {tab === "account" && (
-        <div className="max-w-2xl space-y-5">
+        <div className="max-w-3xl">
           <Section title="Personal Account Information">
             <div className="flex items-center gap-4 pb-4 border-b border-gray-50">
               <div className="w-14 h-14 rounded-full bg-[#e6ebf5] flex items-center justify-center text-[#404d6b] text-xl font-bold flex-shrink-0">DS</div>
@@ -3111,7 +3112,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
 
       {/* ── SECURITY ── */}
       {tab === "security" && (
-        <div className="max-w-2xl space-y-5">
+        <div className="max-w-3xl">
 
           <Section title="Change Password">
             {pwdSuccess && (
