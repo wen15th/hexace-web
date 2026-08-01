@@ -1,12 +1,16 @@
 import { useState } from "react";
 import {
-  ArrowRight, BarChart2, Bell, ChevronUp, ClipboardList,
-  HelpCircle, LayoutDashboard, Menu, Package, Settings,
-  SlidersHorizontal,
+  Archive, ArrowRight, BarChart2, Bell, Boxes, ChevronUp, ClipboardList,
+  HelpCircle, LayoutDashboard, Library, Menu, Package, Settings,
+  SlidersHorizontal, Store,
 } from "lucide-react";
+import { BrandLogo } from "./BrandLogo";
+
+export type ProductLine = "inventory" | "organization" | "marketplace";
 
 export type AppPage =
   | "dashboard"
+  | "product-library"
   | "inventory"
   | "purchase-lists"
   | "purchase-list-detail"
@@ -18,6 +22,7 @@ export type SettingsTab = "general" | "account" | "security";
 
 const NAV_ITEMS: { id: AppPage; label: string; icon: React.ReactNode }[] = [
   { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={16} /> },
+  { id: "product-library", label: "Product Library", icon: <Library size={16} /> },
   { id: "inventory", label: "Inventory", icon: <Package size={16} /> },
   { id: "purchase-lists", label: "Purchase Lists", icon: <ClipboardList size={16} /> },
   { id: "analytics", label: "Analytics", icon: <BarChart2 size={16} /> },
@@ -29,30 +34,46 @@ export function Sidebar({
   onNavigate,
   onNavigateSettings,
   onSignOut,
+  productLine,
+  onSelectProductLine,
 }: {
   currentPage: AppPage;
   onNavigate: (page: AppPage) => void;
   onNavigateSettings: (tab: SettingsTab) => void;
   onSignOut: () => void;
+  productLine: ProductLine;
+  onSelectProductLine: (line: ProductLine) => void;
 }) {
   const activePage = currentPage === "purchase-list-detail" ? "purchase-lists" : currentPage;
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <aside className="sticky top-0 flex h-screen w-60 flex-shrink-0 flex-col border-r border-gray-200 bg-white">
-      <div className="flex h-16 items-center border-b border-gray-100 px-6">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-[#4F6FD8]">
-            <span className="text-xs font-bold text-white">H</span>
-          </div>
-          <div className="flex flex-col leading-tight">
-            <span className="text-[15px] font-semibold leading-tight text-gray-900">Hexace</span>
-            <span className="text-[9px] font-medium tracking-wide text-gray-400">AI-Powered Inventory Platform</span>
-          </div>
+      <div className="border-b border-gray-100 px-4 py-3">
+        <div className="mb-3 grid grid-cols-3 gap-2" aria-label="HexaDent product lines">
+          {([
+            { id: "inventory" as const, label: "AI Inventory Platform", icon: <Boxes size={17} /> },
+            { id: "organization" as const, label: "HexaDent Organization", icon: <Archive size={17} /> },
+            { id: "marketplace" as const, label: "HexaDent Marketplace", icon: <Store size={17} /> },
+          ]).map((line) => (
+            <button
+              key={line.id}
+              type="button"
+              title={line.label}
+              aria-label={line.label}
+              onClick={() => onSelectProductLine(line.id)}
+              className={`flex h-9 items-center justify-center rounded-lg border transition-colors ${productLine === line.id ? "border-[#C7E4DA] bg-[#EFF8F4] text-[#3F7665]" : "border-gray-200 text-gray-400 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-600"}`}
+            >
+              {line.icon}
+            </button>
+          ))}
+        </div>
+        <div className="px-1">
+          <BrandLogo compact />
         </div>
       </div>
 
-      <nav className="flex-1 space-y-0.5 px-3 py-4">
+      <nav className={`flex-1 space-y-0.5 px-3 py-4 ${productLine === "inventory" ? "" : "pointer-events-none opacity-40"}`}>
         {NAV_ITEMS.map((item) => {
           const isActive = item.id === activePage;
           return (
@@ -61,11 +82,11 @@ export function Sidebar({
               onClick={() => onNavigate(item.id)}
               className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
                 isActive
-                  ? "bg-[#F2F5FF] font-semibold text-[#4F6FD8]"
+                  ? "bg-[#EFF8F4] font-semibold text-[#3F7665]"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
               }`}
             >
-              <span className={isActive ? "text-[#4F6FD8]" : "text-gray-400"}>{item.icon}</span>
+              <span className={isActive ? "text-[#3F7665]" : "text-gray-400"}>{item.icon}</span>
               {item.label}
             </button>
           );

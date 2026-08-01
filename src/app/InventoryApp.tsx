@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Sidebar, TopBar, type AppPage, type SettingsTab } from "./components/AppLayout";
+import { Sidebar, TopBar, type AppPage, type ProductLine, type SettingsTab } from "./components/AppLayout";
 import {
   AreaChart, Area, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -7,7 +7,7 @@ import {
 } from "recharts";
 import { Toaster, toast } from "sonner";
 import {
-  LayoutDashboard, Package, ShoppingCart, BarChart2, Settings,
+  LayoutDashboard, Package, Archive, Store, BarChart2, Settings,
   Bell, HelpCircle, ChevronDown, Search, X, Plus, Menu,
   ChevronLeft, ChevronRight, PackagePlus, ListPlus, Pencil,
   Activity, Trash2, SlidersHorizontal, Calendar, Upload,
@@ -34,9 +34,10 @@ interface InventoryItem {
   minQuantity: number;
   unit: string;
   location: string;
-  sku: string;
+  mfgNumber: string;
   barcode: string;
-  preferredSupplier: string;
+  vendor: string;
+  vendorItemNumber: string;
   purchasePrice: string;
   expiryDate: string;
   internalNote: string;
@@ -60,7 +61,7 @@ interface CatalogProduct {
   name: string;
   brand: string;
   category: string;
-  sku: string;
+  mfgNumber: string;
   barcode: string;
   specification: string;
 }
@@ -92,7 +93,8 @@ interface ClinicInventoryFields {
   quantity: string;
   minQuantity: string;
   location: string;
-  preferredSupplier: string;
+  vendor: string;
+  vendorItemNumber: string;
   purchasePrice: string;
   expiryDate: string;
   internalNote: string;
@@ -129,21 +131,21 @@ function makeActivity(
 }
 
 const EMPTY_CLINIC_FIELDS: ClinicInventoryFields = {
-  quantity: "", minQuantity: "", location: "", preferredSupplier: "",
+  quantity: "", minQuantity: "", location: "", vendor: "", vendorItemNumber: "",
   purchasePrice: "", expiryDate: "", internalNote: "",
 };
 
 // ─── Mock Data ─────────────────────────────────────────────────────────────────
 
 const INITIAL_ITEMS: InventoryItem[] = [
-  { id: 1, name: "Composite A2", brand: "3M", category: "Restorative", quantity: 18, minQuantity: 5, unit: "Box", location: "Cabinet 1 - Drawer 2", sku: "3M-CA2-001", barcode: "0350123456781", preferredSupplier: "Henry Schein", purchasePrice: "$24.50", expiryDate: "2026-12-31", internalNote: "", lastUpdated: "Jul 28" },
-  { id: 2, name: "Nitrile Gloves — Medium", brand: "Medicom", category: "Disposables", quantity: 4, minQuantity: 5, unit: "Box", location: "Supply Room - Shelf 1", sku: "MED-GLV-M", barcode: "0628532000019", preferredSupplier: "Patterson Dental", purchasePrice: "$12.00", expiryDate: "", internalNote: "", lastUpdated: "Jul 28" },
-  { id: 3, name: "Universal Adhesive", brand: "Kerr", category: "Restorative", quantity: 0, minQuantity: 2, unit: "Bottle", location: "Cabinet 2 - Drawer 1", sku: "KER-UA-010", barcode: "0076183100158", preferredSupplier: "Henry Schein", purchasePrice: "$38.00", expiryDate: "2025-09-30", internalNote: "", lastUpdated: "Jul 27" },
-  { id: 4, name: "Syringe Needles 27G", brand: "Monoject", category: "Disposables", quantity: 12, minQuantity: 4, unit: "Box", location: "Cabinet 1 - Drawer 3", sku: "MON-27G-50", barcode: "4014837003404", preferredSupplier: "Benco Dental", purchasePrice: "$9.75", expiryDate: "", internalNote: "", lastUpdated: "Jul 27" },
-  { id: 5, name: "Impression Material", brand: "3M", category: "Impression", quantity: 7, minQuantity: 8, unit: "Cartridge", location: "Cabinet 3 - Drawer 2", sku: "3M-IMP-007", barcode: "0350987654321", preferredSupplier: "Henry Schein", purchasePrice: "$55.00", expiryDate: "2026-06-30", internalNote: "Order in bulk", lastUpdated: "Jul 26" },
-  { id: 6, name: "Gauze 2×2", brand: "Medicom", category: "Disposables", quantity: 24, minQuantity: 6, unit: "Pack", location: "Supply Room - Shelf 2", sku: "MED-GZ-22", barcode: "0628532000507", preferredSupplier: "Patterson Dental", purchasePrice: "$6.50", expiryDate: "", internalNote: "", lastUpdated: "Jul 26" },
-  { id: 7, name: "Etchant Gel", brand: "Ultradent", category: "Restorative", quantity: 10, minQuantity: 3, unit: "Syringe", location: "Cabinet 2 - Drawer 3", sku: "ULT-ETG-10", barcode: "4002590200512", preferredSupplier: "Benco Dental", purchasePrice: "$18.00", expiryDate: "2026-03-31", internalNote: "", lastUpdated: "Jul 25" },
-  { id: 8, name: "Cotton Rolls", brand: "Richmond Dental", category: "Disposables", quantity: 6, minQuantity: 10, unit: "Pack", location: "Supply Room - Shelf 3", sku: "RD-CTN-100", barcode: "8901234567890", preferredSupplier: "Henry Schein", purchasePrice: "$4.25", expiryDate: "", internalNote: "", lastUpdated: "Jul 25" },
+  { id: 1, name: "Composite A2", brand: "3M", category: "Restorative", quantity: 18, minQuantity: 5, unit: "Box", location: "Cabinet 1 - Drawer 2", mfgNumber: "3M-CA2-001", barcode: "0350123456781", vendor: "Henry Schein", vendorItemNumber: "112-4456", purchasePrice: "$24.50", expiryDate: "2026-12-31", internalNote: "", lastUpdated: "Jul 28" },
+  { id: 2, name: "Nitrile Gloves — Medium", brand: "Medicom", category: "Disposables", quantity: 4, minQuantity: 5, unit: "Box", location: "Supply Room - Shelf 1", mfgNumber: "MED-GLV-M", barcode: "0628532000019", vendor: "Patterson Dental", vendorItemNumber: "MED-GLV-210", purchasePrice: "$12.00", expiryDate: "", internalNote: "", lastUpdated: "Jul 28" },
+  { id: 3, name: "Universal Adhesive", brand: "Kerr", category: "Restorative", quantity: 0, minQuantity: 2, unit: "Bottle", location: "Cabinet 2 - Drawer 1", mfgNumber: "KER-UA-010", barcode: "0076183100158", vendor: "Henry Schein", vendorItemNumber: "", purchasePrice: "$38.00", expiryDate: "2025-09-30", internalNote: "", lastUpdated: "Jul 27" },
+  { id: 4, name: "Syringe Needles 27G", brand: "Monoject", category: "Disposables", quantity: 12, minQuantity: 4, unit: "Box", location: "Cabinet 1 - Drawer 3", mfgNumber: "MON-27G-50", barcode: "4014837003404", vendor: "Benco Dental", vendorItemNumber: "", purchasePrice: "$9.75", expiryDate: "", internalNote: "", lastUpdated: "Jul 27" },
+  { id: 5, name: "Impression Material", brand: "3M", category: "Impression", quantity: 7, minQuantity: 8, unit: "Cartridge", location: "Cabinet 3 - Drawer 2", mfgNumber: "3M-IMP-007", barcode: "0350987654321", vendor: "Henry Schein", vendorItemNumber: "", purchasePrice: "$55.00", expiryDate: "2026-06-30", internalNote: "Order in bulk", lastUpdated: "Jul 26" },
+  { id: 6, name: "Gauze 2×2", brand: "Medicom", category: "Disposables", quantity: 24, minQuantity: 6, unit: "Pack", location: "Supply Room - Shelf 2", mfgNumber: "MED-GZ-22", barcode: "0628532000507", vendor: "Patterson Dental", vendorItemNumber: "", purchasePrice: "$6.50", expiryDate: "", internalNote: "", lastUpdated: "Jul 26" },
+  { id: 7, name: "Etchant Gel", brand: "Ultradent", category: "Restorative", quantity: 10, minQuantity: 3, unit: "Syringe", location: "Cabinet 2 - Drawer 3", mfgNumber: "ULT-ETG-10", barcode: "4002590200512", vendor: "Benco Dental", vendorItemNumber: "", purchasePrice: "$18.00", expiryDate: "2026-03-31", internalNote: "", lastUpdated: "Jul 25" },
+  { id: 8, name: "Cotton Rolls", brand: "Richmond Dental", category: "Disposables", quantity: 6, minQuantity: 10, unit: "Pack", location: "Supply Room - Shelf 3", mfgNumber: "RD-CTN-100", barcode: "8901234567890", vendor: "Henry Schein", vendorItemNumber: "", purchasePrice: "$4.25", expiryDate: "", internalNote: "", lastUpdated: "Jul 25" },
 ];
 
 const INITIAL_ACTIVITY: ActivityEntry[] = [
@@ -261,16 +263,16 @@ const INITIAL_PURCHASE_LISTS: PurchaseList[] = [
 ];
 
 const CATALOG_PRODUCTS: CatalogProduct[] = [
-  { id: 101, name: "Prophy Paste — Mint", brand: "Dentsply", category: "Prophylaxis", sku: "DEN-PP-MNT", barcode: "0350123456789", specification: "200g jar, mint flavour, medium grit" },
-  { id: 102, name: "Fluoride Varnish", brand: "3M", category: "Preventive", sku: "3M-FV-005", barcode: "0350987654322", specification: "5% NaF, unit dose, 0.4mL per dose" },
-  { id: 103, name: "Dental Floss Picks", brand: "Sunstar", category: "Disposables", sku: "SUN-FP-100", barcode: "4901616300019", specification: "Pack of 100, nylon floss, single-use" },
-  { id: 104, name: "Articulating Paper", brand: "Bausch", category: "Diagnostic", sku: "BAU-AP-40", barcode: "4014837003405", specification: "40μm thickness, blue/red, 200 sheets" },
-  { id: 105, name: "Alginate Impression", brand: "Dentsply", category: "Impression", sku: "DEN-ALG-500", barcode: "0350564738291", specification: "500g, regular-set, dust-free" },
-  { id: 106, name: "Composite B1", brand: "Ivoclar", category: "Restorative", sku: "IVO-CB1-002", barcode: "0762325900023", specification: "Nanohybrid, shade B1, 4g syringe" },
-  { id: 107, name: "Bonding Agent", brand: "Kerr", category: "Restorative", sku: "KER-BA-015", barcode: "0076183100159", specification: "Universal, 5th generation, 6mL bottle" },
-  { id: 108, name: "Dental Bibs", brand: "Medicom", category: "Disposables", sku: "MED-BIB-500", barcode: "0628532000508", specification: "500 pcs/case, 3-ply, 13×18 in" },
-  // Same SKU as an existing item to test duplicate detection
-  { id: 109, name: "Composite A2", brand: "3M", category: "Restorative", sku: "3M-CA2-001", barcode: "0350123456781", specification: "Nanohybrid, shade A2, 4g syringe" },
+  { id: 101, name: "Prophy Paste — Mint", brand: "Dentsply", category: "Prophylaxis", mfgNumber: "DEN-PP-MNT", barcode: "0350123456789", specification: "200g jar, mint flavour, medium grit" },
+  { id: 102, name: "Fluoride Varnish", brand: "3M", category: "Preventive", mfgNumber: "3M-FV-005", barcode: "0350987654322", specification: "5% NaF, unit dose, 0.4mL per dose" },
+  { id: 103, name: "Dental Floss Picks", brand: "Sunstar", category: "Disposables", mfgNumber: "SUN-FP-100", barcode: "4901616300019", specification: "Pack of 100, nylon floss, single-use" },
+  { id: 104, name: "Articulating Paper", brand: "Bausch", category: "Diagnostic", mfgNumber: "BAU-AP-40", barcode: "4014837003405", specification: "40μm thickness, blue/red, 200 sheets" },
+  { id: 105, name: "Alginate Impression", brand: "Dentsply", category: "Impression", mfgNumber: "DEN-ALG-500", barcode: "0350564738291", specification: "500g, regular-set, dust-free" },
+  { id: 106, name: "Composite B1", brand: "Ivoclar", category: "Restorative", mfgNumber: "IVO-CB1-002", barcode: "0762325900023", specification: "Nanohybrid, shade B1, 4g syringe" },
+  { id: 107, name: "Bonding Agent", brand: "Kerr", category: "Restorative", mfgNumber: "KER-BA-015", barcode: "0076183100159", specification: "Universal, 5th generation, 6mL bottle" },
+  { id: 108, name: "Dental Bibs", brand: "Medicom", category: "Disposables", mfgNumber: "MED-BIB-500", barcode: "0628532000508", specification: "500 pcs/case, 3-ply, 13×18 in" },
+  // Same MFG Number as an existing item to test duplicate detection
+  { id: 109, name: "Composite A2", brand: "3M", category: "Restorative", mfgNumber: "3M-CA2-001", barcode: "0350123456781", specification: "Nanohybrid, shade A2, 4g syringe" },
 ];
 
 const CATEGORIES = ["All Categories", "Restorative", "Disposables", "Impression", "Prophylaxis", "Preventive", "Diagnostic", "Accessories"];
@@ -320,10 +322,10 @@ function ProductAvatar({ name, size = "md" }: { name: string; size?: "sm" | "md"
 
 function FilterChip({ label, value, onRemove }: { label: string; value: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 bg-[#F2F5FF] text-[#4F6FD8] rounded-full text-xs font-medium">
-      <span className="text-[#4F6FD8]/60">{label}:</span>
+    <span className="inline-flex items-center gap-1 pl-2.5 pr-1.5 py-1 bg-[#EFF8F4] text-[#3F7665] rounded-full text-xs font-medium">
+      <span className="text-[#3F7665]/60">{label}:</span>
       {value}
-      <button onClick={onRemove} className="ml-0.5 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#4F6FD8]/10 transition-colors">
+      <button onClick={onRemove} className="ml-0.5 w-4 h-4 flex items-center justify-center rounded-full hover:bg-[#9CD4C1]/10 transition-colors">
         <X size={10} />
       </button>
     </span>
@@ -364,7 +366,7 @@ function SelectDropdown({
         <div className="absolute z-30 top-full mt-1 left-0 min-w-full bg-white border border-gray-200 rounded-lg shadow-lg py-1 max-h-56 overflow-y-auto">
           {options.map((opt) => (
             <button key={opt} onClick={() => { onChange(opt); setOpen(false); }}
-              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors ${opt === value ? "text-[#4F6FD8] font-medium" : "text-gray-700"}`}>
+              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors ${opt === value ? "text-[#3F7665] font-medium" : "text-gray-700"}`}>
               {opt}
             </button>
           ))}
@@ -389,17 +391,17 @@ function FormField({ label, required, hint, error, children }: {
   );
 }
 
-function TextInput({ value, onChange, placeholder, type = "text", readOnly, error }: {
+function TextInput({ value, onChange, placeholder, type = "text", readOnly, error, list }: {
   value: string; onChange?: (v: string) => void; placeholder?: string;
-  type?: string; readOnly?: boolean; error?: boolean;
+  type?: string; readOnly?: boolean; error?: boolean; list?: string;
 }) {
   return (
-    <input type={type} value={value} readOnly={readOnly}
+    <input type={type} value={value} readOnly={readOnly} list={list}
       onChange={(e) => onChange?.(e.target.value)} placeholder={placeholder}
       className={`w-full px-3 py-2 border rounded-lg text-sm transition-all focus:outline-none ${
         readOnly ? "bg-gray-50 border-gray-100 text-gray-600 cursor-default"
           : error ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
-          : "bg-white border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"
+          : "bg-white border-gray-200 focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10"
       }`}
     />
   );
@@ -434,18 +436,19 @@ function Pagination({ total, page, perPage, onPage }: {
 }
 
 function SortIcon({ dir }: { dir: SortDir }) {
-  if (dir === "asc") return <ChevronUp size={12} className="text-[#4F6FD8]" />;
-  if (dir === "desc") return <ChevronDown size={12} className="text-[#4F6FD8]" />;
+  if (dir === "asc") return <ChevronUp size={12} className="text-[#3F7665]" />;
+  if (dir === "desc") return <ChevronDown size={12} className="text-[#3F7665]" />;
   return <ChevronsUpDown size={12} className="text-gray-300" />;
 }
 
 // ─── ClinicInventoryForm ──────────────────────────────────────────────────────
 
-function ClinicInventoryForm({ fields, onChange, errors = {}, readOnlyQuantity = false }: {
+function ClinicInventoryForm({ fields, onChange, errors = {}, readOnlyQuantity = false, vendorOptions = [] }: {
   fields: ClinicInventoryFields;
   onChange: (f: ClinicInventoryFields) => void;
   errors?: Partial<Record<keyof ClinicInventoryFields, string>>;
   readOnlyQuantity?: boolean;
+  vendorOptions?: string[];
 }) {
   const set = (k: keyof ClinicInventoryFields) => (v: string) => onChange({ ...fields, [k]: v });
   return (
@@ -470,20 +473,28 @@ function ClinicInventoryForm({ fields, onChange, errors = {}, readOnlyQuantity =
         <TextInput value={fields.location} onChange={set("location")} placeholder="e.g. Cabinet 1 - Drawer 2" />
       </FormField>
       <div className="grid grid-cols-2 gap-3">
-        <FormField label="Preferred Supplier">
-          <TextInput value={fields.preferredSupplier} onChange={set("preferredSupplier")} placeholder="e.g. Henry Schein" />
+        <FormField label="Vendor">
+          <TextInput value={fields.vendor} onChange={set("vendor")} placeholder="Type or select a vendor" list="clinic-vendor-options" />
+          <datalist id="clinic-vendor-options">
+            {vendorOptions.map((vendor) => <option key={vendor} value={vendor} />)}
+          </datalist>
         </FormField>
+        <FormField label="Vendor Item Number">
+          <TextInput value={fields.vendorItemNumber} onChange={set("vendorItemNumber")} placeholder="e.g. 112-4456" />
+        </FormField>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
         <FormField label="Purchase Price">
           <TextInput value={fields.purchasePrice} onChange={set("purchasePrice")} placeholder="e.g. $12.50" />
         </FormField>
+        <FormField label="Expiry Date">
+          <TextInput type="date" value={fields.expiryDate} onChange={set("expiryDate")} />
+        </FormField>
       </div>
-      <FormField label="Expiry Date">
-        <TextInput type="date" value={fields.expiryDate} onChange={set("expiryDate")} />
-      </FormField>
       <FormField label="Internal Note">
         <textarea value={fields.internalNote} onChange={(e) => set("internalNote")(e.target.value)}
           placeholder="Any notes visible only to your clinic..." rows={2}
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 transition-all resize-none" />
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 transition-all resize-none" />
       </FormField>
     </div>
   );
@@ -539,7 +550,7 @@ function AdjustQuantityModal({ item, onClose, onSave }: {
   const modeBtn = (m: AdjustMode, label: string, icon: React.ReactNode) => (
     <button onClick={() => { setMode(m); setValue(""); setErrors({}); }}
       className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-sm font-medium rounded-lg transition-colors ${
-        mode === m ? "bg-[#4F6FD8] text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"}`}>
+        mode === m ? "bg-[#9CD4C1] text-[#214A3F] shadow-sm" : "text-gray-600 hover:bg-gray-100"}`}>
       {icon}{label}
     </button>
   );
@@ -578,9 +589,9 @@ function AdjustQuantityModal({ item, onClose, onSave }: {
           {/* Preview */}
           {previewQty !== null && !errors.value && (
             <div className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm ${
-              previewQty < 0 ? "bg-red-50 border border-red-100" : "bg-[#F2F5FF] border border-[#4F6FD8]/10"}`}>
+              previewQty < 0 ? "bg-red-50 border border-red-100" : "bg-[#EFF8F4] border border-[#9CD4C1]/10"}`}>
               <span className="text-gray-600">New quantity will be</span>
-              <span className={`font-bold text-base ${previewQty < 0 ? "text-red-600" : "text-[#4F6FD8]"}`}>{previewQty} {item.unit}</span>
+              <span className={`font-bold text-base ${previewQty < 0 ? "text-red-600" : "text-[#3F7665]"}`}>{previewQty} {item.unit}</span>
             </div>
           )}
 
@@ -597,7 +608,7 @@ function AdjustQuantityModal({ item, onClose, onSave }: {
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
-          <button onClick={handleSave} className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Save Adjustment</button>
+          <button onClick={handleSave} className="px-4 py-2 text-sm bg-[#9CD4C1] text-[#214A3F] rounded-lg hover:bg-[#86BFAE] transition-colors font-medium">Save Adjustment</button>
         </div>
       </div>
     </div>
@@ -606,8 +617,9 @@ function AdjustQuantityModal({ item, onClose, onSave }: {
 
 // ─── EditInventoryModal ───────────────────────────────────────────────────────
 
-function EditInventoryModal({ item, onClose, onSave }: {
+function EditInventoryModal({ item, vendorOptions, onClose, onSave }: {
   item: InventoryItem;
+  vendorOptions: string[];
   onClose: () => void;
   onSave: (updated: Partial<InventoryItem>) => void;
 }) {
@@ -615,7 +627,8 @@ function EditInventoryModal({ item, onClose, onSave }: {
     quantity: String(item.quantity),
     minQuantity: String(item.minQuantity),
     location: item.location,
-    preferredSupplier: item.preferredSupplier,
+    vendor: item.vendor,
+    vendorItemNumber: item.vendorItemNumber,
     purchasePrice: item.purchasePrice,
     expiryDate: item.expiryDate,
     internalNote: item.internalNote,
@@ -625,7 +638,8 @@ function EditInventoryModal({ item, onClose, onSave }: {
     onSave({
       minQuantity: parseInt(fields.minQuantity) || 0,
       location: fields.location,
-      preferredSupplier: fields.preferredSupplier,
+      vendor: fields.vendor,
+      vendorItemNumber: fields.vendorItemNumber,
       purchasePrice: fields.purchasePrice,
       expiryDate: fields.expiryDate,
       internalNote: fields.internalNote,
@@ -635,7 +649,7 @@ function EditInventoryModal({ item, onClose, onSave }: {
 
   const readOnly = [
     ["Product Name", item.name], ["Brand", item.brand], ["Category", item.category],
-    ["SKU", item.sku], ["Barcode", item.barcode], ["Standard Unit", item.unit],
+    ["MFG Number", item.mfgNumber], ["Barcode", item.barcode], ["Standard Unit", item.unit],
   ];
 
   return (
@@ -666,11 +680,12 @@ function EditInventoryModal({ item, onClose, onSave }: {
             fields={{ ...fields, quantity: String(item.quantity) }}
             onChange={(f) => setFields({ ...f, quantity: String(item.quantity) })}
             readOnlyQuantity
+            vendorOptions={vendorOptions}
           />
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end flex-shrink-0">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
-          <button onClick={handleSave} className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Save Changes</button>
+          <button onClick={handleSave} className="px-4 py-2 text-sm bg-[#9CD4C1] text-[#214A3F] rounded-lg hover:bg-[#86BFAE] transition-colors font-medium">Save Changes</button>
         </div>
       </div>
     </div>
@@ -752,9 +767,9 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
                 const alreadyIn = list.items.some((li) => targets.some((t) => t.name === li.name));
                 return (
                   <label key={list.id}
-                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${selected.has(list.id) ? "bg-[#F2F5FF]" : "hover:bg-gray-50"}`}>
+                    className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-colors ${selected.has(list.id) ? "bg-[#EFF8F4]" : "hover:bg-gray-50"}`}>
                     <input type="checkbox" checked={selected.has(list.id)} onChange={() => toggle(list.id)}
-                      className="w-4 h-4 rounded border-gray-300 text-[#4F6FD8] focus:ring-[#4F6FD8]/30" />
+                      className="w-4 h-4 rounded border-gray-300 text-[#3F7665] focus:ring-[#9CD4C1]/30" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 truncate">{list.name}</p>
                       <p className="text-xs text-gray-400">{list.items.length} items</p>
@@ -770,13 +785,13 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
                   <input autoFocus type="text" value={newName} onChange={(e) => setNewName(e.target.value)}
                     placeholder="New list name..."
                     onKeyDown={(e) => e.key === "Enter" && handleCreateList()}
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10" />
-                  <button onClick={handleCreateList} className="px-3 py-2 bg-[#4F6FD8] text-white rounded-lg text-sm font-medium hover:bg-[#3F5FC2] transition-colors">OK</button>
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10" />
+                  <button onClick={handleCreateList} className="px-3 py-2 bg-[#9CD4C1] text-[#214A3F] rounded-lg text-sm font-medium hover:bg-[#86BFAE] transition-colors">OK</button>
                   <button onClick={() => setCreating(false)} className="px-3 py-2 text-gray-500 hover:bg-gray-100 rounded-lg text-sm transition-colors">✕</button>
                 </div>
               ) : (
                 <button onClick={() => setCreating(true)}
-                  className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-[#4F6FD8] hover:bg-[#F2F5FF] rounded-xl transition-colors">
+                  className="flex items-center gap-2 w-full px-3 py-2.5 text-sm text-[#3F7665] hover:bg-[#EFF8F4] rounded-xl transition-colors">
                   <Plus size={15} /> Create New Purchase List
                 </button>
               )}
@@ -784,7 +799,7 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
             <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
               <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
               <button onClick={handleNext} disabled={selected.size === 0 && !(creating && newName.trim())}
-                className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] disabled:opacity-40 transition-colors font-medium flex items-center gap-1.5">
+                className="px-4 py-2 text-sm bg-[#9CD4C1] text-[#214A3F] rounded-lg hover:bg-[#86BFAE] disabled:opacity-40 transition-colors font-medium flex items-center gap-1.5">
                 Next <ChevronRight size={15} />
               </button>
             </div>
@@ -806,7 +821,7 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
                       type="number" min="1"
                       value={quantities[i]}
                       onChange={(e) => setQuantities((q) => ({ ...q, [i]: e.target.value }))}
-                      className="w-16 px-2 py-1.5 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"
+                      className="w-16 px-2 py-1.5 border border-gray-200 rounded-lg text-sm text-center focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10"
                     />
                     <span className="text-xs text-gray-400">{t.unit}</span>
                   </div>
@@ -818,7 +833,7 @@ function AddToPurchaseListModal({ targets, purchaseLists, onClose, onSave }: {
                 <ChevronLeft size={15} /> Back
               </button>
               <button onClick={handleSave}
-                className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">
+                className="px-4 py-2 text-sm bg-[#9CD4C1] text-[#214A3F] rounded-lg hover:bg-[#86BFAE] transition-colors font-medium">
                 Add to {selected.size > 0 ? (selected.size + " List" + (selected.size > 1 ? "s" : "")) : creating ? "New List" : "List"}
               </button>
             </div>
@@ -863,30 +878,33 @@ function RemoveConfirmModal({ item, onClose, onConfirm }: {
 
 type AddTab = "search" | "manual";
 
-function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
-  existingSkus: Set<string>;
+function AddInventoryModal({ existingMfgNumbers, vendorOptions, initialProduct = null, directConfigure = false, onClose, onAdd, onAdjust }: {
+  existingMfgNumbers: Set<string>;
+  vendorOptions: string[];
+  initialProduct?: CatalogProduct | null;
+  directConfigure?: boolean;
   onClose: () => void;
-  onAdd: (name: string, fields: ClinicInventoryFields) => void;
-  onAdjust: (sku: string) => void;
+  onAdd: (name: string, fields: ClinicInventoryFields, product?: CatalogProduct) => void;
+  onAdjust: (mfgNumber: string) => void;
 }) {
   const [tab, setTab] = useState<AddTab>("search");
-  const [query, setQuery] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<CatalogProduct | null>(null);
+  const [query, setQuery] = useState(initialProduct?.name ?? "");
+  const [selectedProduct, setSelectedProduct] = useState<CatalogProduct | null>(initialProduct);
   const [clinicFields, setClinicFields] = useState<ClinicInventoryFields>(EMPTY_CLINIC_FIELDS);
   const [clinicErrors, setClinicErrors] = useState<Partial<Record<keyof ClinicInventoryFields, string>>>({});
 
   // Manual entry
   const [manualFields, setManualFields] = useState({
-    name: "", brand: "", category: "", sku: "", barcode: "", specification: "",
+    name: "", brand: "", category: "", mfgNumber: "", barcode: "", specification: "",
   });
 
   const filtered = CATALOG_PRODUCTS.filter((p) => {
     const q = query.toLowerCase();
     return p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)
-      || p.sku.toLowerCase().includes(q) || p.barcode.includes(q);
+      || p.mfgNumber.toLowerCase().includes(q) || p.barcode.includes(q);
   });
 
-  const isAlreadyInInventory = selectedProduct ? existingSkus.has(selectedProduct.sku) : false;
+  const isAlreadyInInventory = selectedProduct ? existingMfgNumbers.has(selectedProduct.mfgNumber) : false;
 
   const validate = (): boolean => {
     const e: Partial<Record<keyof ClinicInventoryFields, string>> = {};
@@ -899,7 +917,10 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
   const handleAdd = () => {
     if (!validate()) return;
     const name = tab === "manual" ? manualFields.name : selectedProduct!.name;
-    onAdd(name, clinicFields);
+    const product = tab === "search"
+      ? selectedProduct ?? undefined
+      : { id: Date.now(), ...manualFields };
+    onAdd(name, clinicFields, product);
     onClose();
   };
 
@@ -908,21 +929,21 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
   const tabBtn = (t: AddTab, label: string) => (
     <button onClick={() => { setTab(t); setSelectedProduct(null); setClinicFields(EMPTY_CLINIC_FIELDS); }}
       className={`px-4 py-2.5 text-sm font-medium relative transition-colors ${
-        tab === t ? "text-[#4F6FD8]" : "text-gray-500 hover:text-gray-700"}`}>
+        tab === t ? "text-[#3F7665]" : "text-gray-500 hover:text-gray-700"}`}>
       {label}
-      {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4F6FD8] rounded-full" />}
+      {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9CD4C1] rounded-full" />}
     </button>
   );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className={`relative bg-white rounded-2xl shadow-2xl flex mx-4 overflow-hidden transition-all duration-300 ${hasRightPanel ? "max-w-3xl w-full" : "max-w-xl w-full"}`}
+      <div className={`relative bg-white rounded-2xl shadow-2xl flex mx-4 overflow-hidden transition-all duration-300 ${directConfigure ? "max-w-xl w-full" : hasRightPanel ? "max-w-3xl w-full" : "max-w-xl w-full"}`}
         style={{ maxHeight: "88vh" }}>
         <div className="flex flex-1 min-h-0">
 
           {/* Left: Search Library or hidden when Manual */}
-          {tab === "search" && (
+          {tab === "search" && !directConfigure && (
             <div className="flex flex-col min-h-0 flex-1">
               {/* Header */}
               <div className="flex items-center justify-between px-6 pt-5 pb-0 flex-shrink-0">
@@ -941,9 +962,9 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input autoFocus type="text" placeholder="Product name, SKU, or barcode..."
+                    <input autoFocus type="text" placeholder="Product name, MFG Number, or barcode..."
                       value={query} onChange={(e) => setQuery(e.target.value)}
-                      className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10" />
+                      className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10" />
                   </div>
                   <button className="flex items-center gap-1.5 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-500 hover:bg-gray-50 transition-colors">
                     <Scan size={14} /> Scan
@@ -958,7 +979,7 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                     <p className="text-sm font-medium text-gray-500">No products found</p>
                     <p className="text-xs mt-1 mb-5 text-gray-400">"{query}" is not in the Product Library</p>
                     <button onClick={() => setTab("manual")}
-                      className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#4F6FD8] border border-[#4F6FD8]/30 rounded-lg hover:bg-[#4F6FD8]/5 transition-colors">
+                      className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#3F7665] border border-[#9CD4C1]/30 rounded-lg hover:bg-[#9CD4C1]/5 transition-colors">
                       <Plus size={14} /> Add Product Manually
                     </button>
                   </div>
@@ -968,13 +989,13 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                       const isSelected = selectedProduct?.id === p.id;
                       return (
                         <button key={p.id} onClick={() => { setSelectedProduct(p); setClinicFields(EMPTY_CLINIC_FIELDS); }}
-                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left group ${isSelected ? "bg-[#F2F5FF]" : "hover:bg-gray-50"}`}>
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-left group ${isSelected ? "bg-[#EFF8F4]" : "hover:bg-gray-50"}`}>
                           <ProductAvatar name={p.name} />
                           <div className="flex-1 min-w-0">
-                            <p className={`text-sm font-semibold truncate ${isSelected ? "text-[#4F6FD8]" : "text-gray-900"}`}>{p.name}</p>
-                            <p className="text-xs text-gray-400 mt-0.5 truncate">{p.brand} · {p.category} · <span className="font-mono">{p.sku}</span></p>
+                            <p className={`text-sm font-semibold truncate ${isSelected ? "text-[#3F7665]" : "text-gray-900"}`}>{p.name}</p>
+                            <p className="text-xs text-gray-400 mt-0.5 truncate">{p.brand} · {p.category} · <span className="font-mono">{p.mfgNumber}</span></p>
                           </div>
-                          <ChevronRight size={14} className={`flex-shrink-0 ${isSelected ? "text-[#4F6FD8]" : "text-gray-200 group-hover:text-gray-400"}`} />
+                          <ChevronRight size={14} className={`flex-shrink-0 ${isSelected ? "text-[#3F7665]" : "text-gray-200 group-hover:text-gray-400"}`} />
                         </button>
                       );
                     })}
@@ -988,7 +1009,7 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
           )}
 
           {/* Manual Entry — full width */}
-          {tab === "manual" && (
+          {tab === "manual" && !directConfigure && (
             <div className="flex flex-col min-h-0 flex-1">
               <div className="flex items-center justify-between px-6 pt-5 pb-0 flex-shrink-0">
                 <div>
@@ -1021,8 +1042,8 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                       <SelectDropdown value={manualFields.category} options={CATEGORIES.slice(1)} onChange={(v) => setManualFields((f) => ({ ...f, category: v }))} placeholder="Select category" />
                     </FormField>
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="SKU">
-                        <TextInput value={manualFields.sku} onChange={(v) => setManualFields((f) => ({ ...f, sku: v }))} placeholder="e.g. 3M-CA2-001" />
+                      <FormField label="MFG Number">
+                        <TextInput value={manualFields.mfgNumber} onChange={(v) => setManualFields((f) => ({ ...f, mfgNumber: v }))} placeholder="e.g. 3M-CA2-001" />
                       </FormField>
                       <FormField label="Barcode">
                         <TextInput value={manualFields.barcode} onChange={(v) => setManualFields((f) => ({ ...f, barcode: v }))} placeholder="e.g. 0350123456789" />
@@ -1033,22 +1054,25 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                     </FormField>
                   </div>
                 </div>
-                <ClinicInventoryForm fields={clinicFields} onChange={setClinicFields} errors={clinicErrors} />
+                <ClinicInventoryForm fields={clinicFields} onChange={setClinicFields} errors={clinicErrors} vendorOptions={vendorOptions} />
               </div>
               <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end flex-shrink-0">
                 <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
-                <button onClick={handleAdd} className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Add to Inventory</button>
+                <button onClick={handleAdd} className="px-4 py-2 text-sm bg-[#9CD4C1] text-[#214A3F] rounded-lg hover:bg-[#86BFAE] transition-colors font-medium">Add to Inventory</button>
               </div>
             </div>
           )}
 
           {/* Right panel: catalog product detail + inventory settings */}
           {tab === "search" && selectedProduct && (
-            <div className="w-80 flex-shrink-0 border-l border-gray-100 flex flex-col bg-white overflow-hidden">
+            <div className={`${directConfigure ? "w-full" : "w-80 flex-shrink-0 border-l"} border-gray-100 flex flex-col bg-white overflow-hidden`}>
               <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3 flex-shrink-0">
                 <ProductAvatar name={selectedProduct.name} size="sm" />
-                <span className="text-sm font-semibold text-gray-900 truncate flex-1">{selectedProduct.name}</span>
-                <button onClick={() => setSelectedProduct(null)} className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-colors flex-shrink-0"><X size={14} /></button>
+                <div className="min-w-0 flex-1">
+                  {directConfigure && <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">Add to Inventory</p>}
+                  <span className="block truncate text-sm font-semibold text-gray-900">{selectedProduct.name}</span>
+                </div>
+                <button onClick={directConfigure ? onClose : () => setSelectedProduct(null)} className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 transition-colors flex-shrink-0"><X size={14} /></button>
               </div>
               <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
                 {/* Duplicate warning */}
@@ -1059,24 +1083,24 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                       <p className="text-xs font-semibold">Already in your inventory</p>
                     </div>
                     <p className="text-xs text-amber-600">This product already exists. Adding it again would create a duplicate.</p>
-                    <button onClick={() => { onAdjust(selectedProduct.sku); onClose(); }}
+                    <button onClick={() => { onAdjust(selectedProduct.mfgNumber); onClose(); }}
                       className="text-xs font-medium text-amber-700 underline underline-offset-2 hover:text-amber-800 transition-colors">
                       Adjust Stock Instead →
                     </button>
                   </div>
                 )}
                 {/* Product image placeholder */}
-                <div className="w-full aspect-[4/3] bg-gray-50 rounded-xl border border-gray-100 flex flex-col items-center justify-center text-gray-300">
+                <div className={`w-full ${directConfigure ? "h-32" : "aspect-[4/3]"} bg-gray-50 rounded-xl border border-gray-100 flex flex-col items-center justify-center text-gray-300`}>
                   <Package size={24} /><span className="text-xs mt-1">No image</span>
                 </div>
                 {/* Product info read-only */}
-                <div className="space-y-3">
+                <div className={directConfigure ? "grid grid-cols-2 gap-3" : "space-y-3"}>
                   <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Product Information</h3>
                   {[
                     ["Product Name", selectedProduct.name],
                     ["Brand", selectedProduct.brand],
                     ["Category", selectedProduct.category],
-                    ["SKU", selectedProduct.sku],
+                    ["MFG Number", selectedProduct.mfgNumber],
                     ["Barcode", selectedProduct.barcode],
                     ["Specification", selectedProduct.specification],
                   ].map(([label, value]) => (
@@ -1086,13 +1110,13 @@ function AddInventoryModal({ existingSkus, onClose, onAdd, onAdjust }: {
                   ))}
                 </div>
                 {!isAlreadyInInventory && (
-                  <ClinicInventoryForm fields={clinicFields} onChange={setClinicFields} errors={clinicErrors} />
+                  <ClinicInventoryForm fields={clinicFields} onChange={setClinicFields} errors={clinicErrors} vendorOptions={vendorOptions} />
                 )}
               </div>
               {!isAlreadyInInventory && (
                 <div className="px-5 py-4 border-t border-gray-100 flex gap-2 flex-shrink-0">
-                  <button onClick={() => setSelectedProduct(null)} className="flex-1 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium">Cancel</button>
-                  <button onClick={handleAdd} className="flex-1 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Add to Inventory</button>
+                  <button onClick={directConfigure ? onClose : () => setSelectedProduct(null)} className="flex-1 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium">Cancel</button>
+                  <button onClick={handleAdd} className="flex-1 py-2 text-sm bg-[#9CD4C1] text-[#214A3F] rounded-lg hover:bg-[#86BFAE] transition-colors font-medium">Add to Inventory</button>
                 </div>
               )}
             </div>
@@ -1143,7 +1167,7 @@ function ItemDetailsDrawer({ item, onClose, onAdjust, onEdit, onPurchase, onRemo
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Product Information</h3>
             <div className="space-y-2">
               {[
-                ["SKU", item.sku],
+                ["MFG Number", item.mfgNumber],
                 ["Barcode", item.barcode],
                 ["Unit", item.unit],
               ].map(([l, v]) => (
@@ -1170,7 +1194,8 @@ function ItemDetailsDrawer({ item, onClose, onAdjust, onEdit, onPurchase, onRemo
               {[
                 ["Minimum Quantity", item.minQuantity.toString()],
                 ["Location", item.location || "—"],
-                ["Preferred Supplier", item.preferredSupplier || "—"],
+                ["Vendor", item.vendor || "—"],
+                ["Vendor Item Number", item.vendorItemNumber || "—"],
                 ["Purchase Price", item.purchasePrice || "—"],
                 ["Expiry Date", item.expiryDate || "—"],
                 ["Last Updated", item.lastUpdated],
@@ -1194,7 +1219,7 @@ function ItemDetailsDrawer({ item, onClose, onAdjust, onEdit, onPurchase, onRemo
         <div className="px-5 py-4 border-t border-gray-100 flex-shrink-0 space-y-2">
           <div className="grid grid-cols-2 gap-2">
             <button onClick={() => { onAdjust(item); onClose(); }}
-              className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium bg-[#4F6FD8] text-white rounded-xl hover:bg-[#3F5FC2] transition-colors">
+              className="flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium bg-[#9CD4C1] text-[#214A3F] rounded-xl hover:bg-[#86BFAE] transition-colors">
               <SlidersHorizontal size={14} /> Adjust Stock
             </button>
             <button onClick={() => { onPurchase([item]); onClose(); }}
@@ -1228,7 +1253,7 @@ function BulkActionBar({ count, onPurchase, onDeselect }: {
   count: number; onPurchase: () => void; onDeselect: () => void;
 }) {
   return (
-    <div className="flex items-center gap-4 px-4 py-3 bg-[#4F6FD8] rounded-xl text-white">
+    <div className="flex items-center gap-4 px-4 py-3 bg-[#9CD4C1] rounded-xl text-[#214A3F]">
       <span className="text-sm font-medium">{count} item{count > 1 ? "s" : ""} selected</span>
       <div className="flex items-center gap-2 flex-1">
         <button onClick={onPurchase}
@@ -1286,7 +1311,7 @@ function ItemsTab({ items, initialSearch = "", initialStatusFilter = "", onSearc
 
   const filtered = items.filter((item) => {
     const q = search.toLowerCase();
-    const matchSearch = !q || item.name.toLowerCase().includes(q) || item.sku.toLowerCase().includes(q) || item.barcode.includes(q);
+    const matchSearch = !q || item.name.toLowerCase().includes(q) || item.mfgNumber.toLowerCase().includes(q) || item.barcode.includes(q);
     const matchCat = category === "All Categories" || item.category === category;
     const matchStatus = stockStatus === "All Status" || computeStatus(item.quantity, item.minQuantity) === stockStatus;
     return matchSearch && matchCat && matchStatus;
@@ -1342,9 +1367,9 @@ function ItemsTab({ items, initialSearch = "", initialStatusFilter = "", onSearc
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-shrink-0">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input type="text" placeholder="Product name, SKU, or barcode" value={search}
+          <input type="text" placeholder="Product name, MFG Number, or barcode" value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-72 focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 bg-white" />
+            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-72 focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 bg-white" />
         </div>
         <SelectDropdown value={category} options={CATEGORIES} onChange={(v) => { setCategory(v); setPage(1); }} />
         <SelectDropdown value={stockStatus} options={STOCK_STATUSES_FILTER} onChange={(v) => { setStockStatus(v); setPage(1); }} />
@@ -1364,7 +1389,7 @@ function ItemsTab({ items, initialSearch = "", initialStatusFilter = "", onSearc
                 <tr className="border-b border-gray-100 bg-gray-50/60">
                   <th className="px-4 py-3 w-10">
                     <input type="checkbox" checked={allSelected} onChange={toggleAll}
-                      className="w-4 h-4 rounded border-gray-300 text-[#4F6FD8] focus:ring-[#4F6FD8]/30" />
+                      className="w-4 h-4 rounded border-gray-300 text-[#3F7665] focus:ring-[#9CD4C1]/30" />
                   </th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide w-10" />
                   {sortTh("Product", "name")}
@@ -1382,16 +1407,16 @@ function ItemsTab({ items, initialSearch = "", initialStatusFilter = "", onSearc
                 {paginated.map((item) => {
                   const status = computeStatus(item.quantity, item.minQuantity);
                   return (
-                    <tr key={item.id} className={`border-b border-gray-50 transition-colors ${selected.has(item.id) ? "bg-[#F2F5FF]/50" : "hover:bg-gray-50/60"}`}>
+                    <tr key={item.id} className={`border-b border-gray-50 transition-colors ${selected.has(item.id) ? "bg-[#EFF8F4]/50" : "hover:bg-gray-50/60"}`}>
                       <td className="px-4 py-3">
                         <input type="checkbox" checked={selected.has(item.id)} onChange={() => toggleOne(item.id)}
-                          className="w-4 h-4 rounded border-gray-300 text-[#4F6FD8] focus:ring-[#4F6FD8]/30" />
+                          className="w-4 h-4 rounded border-gray-300 text-[#3F7665] focus:ring-[#9CD4C1]/30" />
                       </td>
                       <td className="px-4 py-3"><ProductAvatar name={item.name} /></td>
                       <td className="px-4 py-3">
-                        <button onClick={() => onViewDetail(item)} className="text-left hover:text-[#4F6FD8] transition-colors group">
-                          <p className="text-sm font-semibold text-gray-900 group-hover:text-[#4F6FD8] transition-colors">{item.name}</p>
-                          <p className="text-xs text-gray-400 font-mono mt-0.5">{item.sku}</p>
+                        <button onClick={() => onViewDetail(item)} className="text-left hover:text-[#3F7665] transition-colors group">
+                          <p className="text-sm font-semibold text-gray-900 group-hover:text-[#3F7665] transition-colors">{item.name}</p>
+                          <p className="text-xs text-gray-400 font-mono mt-0.5">{item.mfgNumber}</p>
                         </button>
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700">{item.brand}</td>
@@ -1484,7 +1509,7 @@ function ActivityTab({ activity, productFilter, onClearProductFilter }: {
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input type="text" placeholder="Search product or reason" value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-60 focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 bg-white" />
+            className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-60 focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 bg-white" />
         </div>
         <SelectDropdown value={productDropFilter} options={allProducts} onChange={(v) => { setProductDropFilter(v); setPage(1); }} icon={<Tag size={13} />} />
         <SelectDropdown value={typeFilter} options={typeOptions} onChange={(v) => { setTypeFilter(v); setPage(1); }} icon={<SlidersHorizontal size={13} />} />
@@ -1609,7 +1634,7 @@ function ReceiveConfirmModal({ item, onClose, onConfirm }: {
                 type="number" min="1" max={remaining}
                 value={qty}
                 onChange={(e) => { setQty(e.target.value); setError(""); }}
-                className={`w-24 px-3 py-2 border rounded-lg text-sm text-center focus:outline-none focus:ring-2 transition-all ${error ? "border-red-300 focus:border-red-400 focus:ring-red-400/10" : "bg-white border-gray-200 focus:border-[#4F6FD8] focus:ring-[#4F6FD8]/10"}`}
+                className={`w-24 px-3 py-2 border rounded-lg text-sm text-center focus:outline-none focus:ring-2 transition-all ${error ? "border-red-300 focus:border-red-400 focus:ring-red-400/10" : "bg-white border-gray-200 focus:border-[#9CD4C1] focus:ring-[#9CD4C1]/10"}`}
               />
               <span className="text-sm text-gray-500">{item.unit}</span>
               <span className="text-xs text-gray-400">of {remaining} remaining</span>
@@ -1633,7 +1658,7 @@ function ReceiveConfirmModal({ item, onClose, onConfirm }: {
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2">
           <button onClick={onClose} className="flex-1 py-2.5 text-sm text-gray-600 hover:bg-gray-100 rounded-xl transition-colors font-medium border border-gray-200">Cancel</button>
           <button onClick={handleConfirm}
-            className="flex-1 py-2.5 text-sm bg-[#4F6FD8] text-white rounded-xl hover:bg-[#3F5FC2] transition-colors font-medium">
+            className="flex-1 py-2.5 text-sm bg-[#9CD4C1] text-[#214A3F] rounded-xl hover:bg-[#86BFAE] transition-colors font-medium">
             Confirm Receipt
           </button>
         </div>
@@ -1661,19 +1686,19 @@ function EditListModal({ list, onClose, onSave }: {
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5">List Name <span className="text-red-500">*</span></label>
             <input autoFocus type="text" value={name} onChange={(e) => { setName(e.target.value); setError(""); }}
-              className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none transition-all ${error ? "border-red-300 focus:border-red-400" : "border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"}`} />
+              className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none transition-all ${error ? "border-red-300 focus:border-red-400" : "border-gray-200 focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10"}`} />
             {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5">Notes</label>
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 resize-none" />
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 resize-none" />
           </div>
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
           <button onClick={() => { if (!name.trim()) { setError("Required"); return; } onSave(name.trim(), notes.trim()); onClose(); }}
-            className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">Save</button>
+            className="px-4 py-2 text-sm bg-[#9CD4C1] text-[#214A3F] rounded-lg hover:bg-[#86BFAE] transition-colors font-medium">Save</button>
         </div>
       </div>
     </div>
@@ -1761,7 +1786,7 @@ function PurchaseListDetailPage({ list, onBack, onUpdate, onDelete, onNavigateTo
     <main className="flex-1 overflow-y-auto px-8 py-6">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-400 mb-5">
-        <button onClick={onBack} className="hover:text-[#4F6FD8] transition-colors">Purchase Lists</button>
+        <button onClick={onBack} className="hover:text-[#3F7665] transition-colors">Purchase Lists</button>
         <ChevronRight size={14} />
         <span className="text-gray-700 font-medium truncate">{list.name}</span>
       </nav>
@@ -1853,10 +1878,10 @@ function PurchaseListDetailPage({ list, onBack, onUpdate, onDelete, onNavigateTo
               <p className="text-sm font-semibold text-gray-700">Receiving progress</p>
               <p className="text-xs text-gray-400 mt-0.5">{receivedCount} of {total} items fully received</p>
             </div>
-            <span className="text-2xl font-bold text-[#4F6FD8]">{pct}%</span>
+            <span className="text-2xl font-bold text-[#3F7665]">{pct}%</span>
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[#4F6FD8] rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+            <div className="h-full bg-[#9CD4C1] rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
           </div>
         </div>
       )}
@@ -1937,7 +1962,7 @@ function PurchaseListDetailPage({ list, onBack, onUpdate, onDelete, onNavigateTo
                           <div className="flex items-center justify-end gap-2">
                             {st !== "received" && (
                               <button onClick={() => setReceiveTarget(item)}
-                                className="px-3 py-1.5 text-xs font-medium text-[#4F6FD8] border border-[#4F6FD8]/30 rounded-lg hover:bg-[#4F6FD8]/5 transition-colors">
+                                className="px-3 py-1.5 text-xs font-medium text-[#3F7665] border border-[#9CD4C1]/30 rounded-lg hover:bg-[#9CD4C1]/5 transition-colors">
                                 Receive
                               </button>
                             )}
@@ -1978,20 +2003,154 @@ function PurchaseListDetailPage({ list, onBack, onUpdate, onDelete, onNavigateTo
   );
 }
 
+// ─── ProductLibraryPage ──────────────────────────────────────────────────────
+
+function ProductLibraryPage({ existingMfgNumbers, onAddProduct }: {
+  existingMfgNumbers: Set<string>;
+  onAddProduct: (product: CatalogProduct) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All Categories");
+  const normalizedQuery = query.trim().toLowerCase();
+  const products = CATALOG_PRODUCTS.filter((product) => {
+    const matchesKeyword = !normalizedQuery || [product.name, product.brand, product.mfgNumber, product.barcode]
+      .some((value) => value.toLowerCase().includes(normalizedQuery));
+    return matchesKeyword && (category === "All Categories" || product.category === category);
+  });
+
+  return (
+    <main className="flex-1 overflow-y-auto px-8 py-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Product Library</h1>
+        <p className="mt-1 text-sm text-gray-500">Browse standard products and add them to your clinic inventory.</p>
+      </div>
+
+      <div className="mb-5 flex gap-3">
+        <div className="relative max-w-xl flex-1">
+          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search product name, brand, MFG Number, or barcode"
+            className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-10 pr-3 text-sm outline-none transition focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10"
+          />
+        </div>
+        <select
+          value={category}
+          onChange={(event) => setCategory(event.target.value)}
+          className="rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 outline-none focus:border-[#9CD4C1]"
+        >
+          {CATEGORIES.map((option) => <option key={option}>{option}</option>)}
+        </select>
+      </div>
+
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-xs font-medium text-gray-400">{products.length} product{products.length === 1 ? "" : "s"}</p>
+        <p className="text-xs text-gray-400">Products already in inventory cannot be added again.</p>
+      </div>
+
+      {products.length === 0 ? (
+        <div className={`${CARD} flex flex-col items-center justify-center py-20 text-center`}>
+          <Package size={34} className="mb-3 text-gray-300" />
+          <p className="text-sm font-semibold text-gray-700">No products found</p>
+          <p className="mt-1 text-xs text-gray-400">Try another keyword or category.</p>
+        </div>
+      ) : (
+        <div className={`${CARD} overflow-hidden`}>
+          <table className="w-full table-fixed border-collapse">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/70 text-left">
+                <th className="w-[25%] px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Product</th>
+                <th className="w-[12%] px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Brand</th>
+                <th className="w-[14%] px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Category</th>
+                <th className="w-[16%] px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">MFG Number</th>
+                <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-gray-400">Specification</th>
+                <th className="w-[15%] px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-gray-400">Inventory</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product) => {
+                const inInventory = existingMfgNumbers.has(product.mfgNumber);
+                return (
+                  <tr key={product.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/60">
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <ProductAvatar name={product.name} />
+                        <span className="truncate text-sm font-semibold text-gray-900">{product.name}</span>
+                      </div>
+                    </td>
+                    <td className="truncate px-4 py-3.5 text-sm text-gray-600">{product.brand}</td>
+                    <td className="px-4 py-3.5">
+                      <span className="inline-flex rounded-full bg-[#EFF8F4] px-2 py-1 text-[10px] font-semibold text-[#3F7665]">{product.category}</span>
+                    </td>
+                    <td className="truncate px-4 py-3.5 font-mono text-xs text-gray-600">{product.mfgNumber}</td>
+                    <td className="truncate px-4 py-3.5 text-xs text-gray-500" title={product.specification}>{product.specification}</td>
+                    <td className="px-5 py-3.5 text-right">
+                      <button
+                        type="button"
+                        disabled={inInventory}
+                        onClick={() => onAddProduct(product)}
+                        className={`inline-flex min-w-28 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${inInventory ? "cursor-not-allowed bg-gray-100 text-gray-400" : "bg-[#9CD4C1] text-[#214A3F] hover:bg-[#86BFAE]"}`}
+                      >
+                        {inInventory ? <><CheckCheck size={14} /> In Inventory</> : <><Plus size={14} /> Add</>}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </main>
+  );
+}
+
+function ProductLineComingSoon({ productLine }: { productLine: Exclude<ProductLine, "inventory"> }) {
+  const content = productLine === "organization"
+    ? { title: "HexaDent Organization", description: "A smarter way to organize and standardize clinical storage." }
+    : { title: "HexaDent Marketplace", description: "A connected marketplace for discovering and ordering clinic supplies." };
+
+  return (
+    <main className="flex flex-1 items-center justify-center overflow-y-auto bg-gradient-to-br from-[#F7FBF9] to-[#EFF8F4] px-8 py-10">
+      <div className="max-w-lg text-center">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-[#3F7665] shadow-[0_8px_30px_rgba(63,125,106,0.14)]">
+          {productLine === "organization" ? <Archive size={28} /> : <Store size={28} />}
+        </div>
+        <span className="inline-flex rounded-full border border-[#C7E4DA] bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#3F7665]">Coming Soon</span>
+        <h1 className="mt-5 text-3xl font-bold tracking-[-0.03em] text-gray-900">{content.title}</h1>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-gray-500">{content.description}</p>
+      </div>
+    </main>
+  );
+}
+
 // ─── DashboardPage ────────────────────────────────────────────────────────────
 
 const USAGE_DATA_6M = [
-  { month: "Feb", value: 280 }, { month: "Mar", value: 310 }, { month: "Apr", value: 295 },
-  { month: "May", value: 340 }, { month: "Jun", value: 375 }, { month: "Jul", value: 412 },
+  { month: "Feb", Restorative: 82, Disposables: 118, Impression: 46, Preventive: 34 },
+  { month: "Mar", Restorative: 91, Disposables: 126, Impression: 52, Preventive: 41 },
+  { month: "Apr", Restorative: 86, Disposables: 121, Impression: 49, Preventive: 39 },
+  { month: "May", Restorative: 102, Disposables: 139, Impression: 55, Preventive: 44 },
+  { month: "Jun", Restorative: 109, Disposables: 151, Impression: 62, Preventive: 53 },
+  { month: "Jul", Restorative: 116, Disposables: 164, Impression: 69, Preventive: 63 },
 ];
 const USAGE_DATA_12M = [
-  { month: "Aug", value: 210 }, { month: "Sep", value: 235 }, { month: "Oct", value: 258 },
-  { month: "Nov", value: 241 }, { month: "Dec", value: 265 }, { month: "Jan", value: 290 },
+  { month: "Aug", Restorative: 65, Disposables: 91, Impression: 31, Preventive: 23 },
+  { month: "Sep", Restorative: 69, Disposables: 103, Impression: 36, Preventive: 27 },
+  { month: "Oct", Restorative: 75, Disposables: 109, Impression: 42, Preventive: 32 },
+  { month: "Nov", Restorative: 71, Disposables: 101, Impression: 39, Preventive: 30 },
+  { month: "Dec", Restorative: 78, Disposables: 112, Impression: 43, Preventive: 32 },
+  { month: "Jan", Restorative: 84, Disposables: 119, Impression: 48, Preventive: 39 },
   ...USAGE_DATA_6M,
 ];
 const USAGE_DATA_24M = [
-  { month: "Aug'23", value: 145 }, { month: "Oct'23", value: 168 }, { month: "Dec'23", value: 185 },
-  { month: "Feb'24", value: 172 }, { month: "Apr'24", value: 196 }, { month: "Jun'24", value: 210 },
+  { month: "Aug'23", Restorative: 48, Disposables: 63, Impression: 21, Preventive: 13 },
+  { month: "Oct'23", Restorative: 52, Disposables: 72, Impression: 26, Preventive: 18 },
+  { month: "Dec'23", Restorative: 57, Disposables: 78, Impression: 28, Preventive: 22 },
+  { month: "Feb'24", Restorative: 53, Disposables: 73, Impression: 27, Preventive: 19 },
+  { month: "Apr'24", Restorative: 60, Disposables: 84, Impression: 30, Preventive: 22 },
+  { month: "Jun'24", Restorative: 63, Disposables: 89, Impression: 34, Preventive: 24 },
   ...USAGE_DATA_12M,
 ];
 
@@ -2023,12 +2182,10 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
     const diff = (d.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
     return diff >= 0 && diff <= 90;
   }).length;
-  const totalValue = items.reduce((s, i) => s + (parseFloat(i.purchasePrice?.replace(/[^0-9.]/g, "") || "0") * i.quantity), 0);
-
   const pieData = [
-    { name: "In Stock", value: inStock, color: "#10b981" },
-    { name: "Low Stock", value: lowStock, color: "#f59e0b" },
-    { name: "Out of Stock", value: outOfStock, color: "#ef4444" },
+    { name: "In Stock", value: inStock, color: "#68C5A5" },
+    { name: "Low Stock", value: lowStock, color: "#F0C064" },
+    { name: "Out of Stock", value: outOfStock, color: "#ED8985" },
   ];
 
   const usageData = usagePeriod === "6m" ? USAGE_DATA_6M : usagePeriod === "12m" ? USAGE_DATA_12M : USAGE_DATA_24M;
@@ -2052,39 +2209,30 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
   const statCards: StatCard[] = [
     {
       label: "Total Items", value: total.toLocaleString(),
-      sub: "+24 from last month", subUp: true,
-      accent: "#4F6FD8", iconBg: "#F2F5FF",
-      icon: <Boxes size={17} style={{ color: "#4F6FD8" }} />,
+      sub: "Active inventory records",
+      accent: "#3F7665", iconBg: "#EFF8F4",
+      icon: <Boxes size={17} style={{ color: "#3F7665" }} />,
     },
     {
-      label: "Total Value",
-      value: "$" + (totalValue > 0
-        ? totalValue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        : "18,450.60"),
-      sub: "+$1.8k from last month", subUp: true,
-      accent: "#10b981", iconBg: "#ecfdf5",
-      icon: <BarChart2 size={17} style={{ color: "#10b981" }} />,
-    },
-    {
-      label: "Low Stock Items", value: String(lowStock || 23),
+      label: "Low Stock Items", value: String(lowStock),
       sub: "View All",
       accent: "#f59e0b", iconBg: "#fffbeb",
       icon: <AlertTriangle size={17} style={{ color: "#f59e0b" }} />,
       onSub: () => onNavigateWithStatusFilter("Low Stock"),
     },
     {
-      label: "Out of Stock", value: String(outOfStock || 7),
+      label: "Out of Stock", value: String(outOfStock),
       sub: "View All",
       accent: "#ef4444", iconBg: "#fef2f2",
       icon: <AlertTriangle size={17} style={{ color: "#ef4444" }} />,
       onSub: () => onNavigateWithStatusFilter("Out of Stock"),
     },
     {
-      label: "Expiring Soon", value: String(expiringSoon || 15),
+      label: "Expiring Soon", value: String(expiringSoon),
       sub: "View All",
       accent: "#f97316", iconBg: "#fff7ed",
       icon: <Clock size={17} style={{ color: "#f97316" }} />,
-      onSub: () => onNavigateWithStatusFilter("Low Stock"),
+      onSub: onNavigateToInventory,
     },
   ];
 
@@ -2097,7 +2245,7 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
       </div>
 
       {/* Row 1 — Stat cards */}
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         {statCards.map((c) => (
           <div key={c.label} className={`${CARD} p-5`}>
             {/* top row: label + icon */}
@@ -2158,17 +2306,17 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
             ))}
           </div>
           <button onClick={onNavigateToInventory}
-            className="mt-4 text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors text-center flex items-center justify-center gap-1">
+            className="mt-4 text-xs font-semibold text-[#3F7665] hover:text-[#315F52] transition-colors text-center flex items-center justify-center gap-1">
             View Full Inventory <ArrowRight size={11} />
           </button>
         </div>
 
-        {/* Usage Trend */}
+        {/* Usage Trend by Category */}
         <div className={`col-span-5 ${CARD} p-5 flex flex-col`}>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-semibold text-gray-900">Usage Trend</p>
+            <p className="text-sm font-semibold text-gray-900">Usage Trend by Category</p>
             <select value={usagePeriod} onChange={(e) => setUsagePeriod(e.target.value as "6m" | "12m" | "24m")}
-              className="text-xs bg-gray-50 border-0 rounded-lg px-2.5 py-1.5 text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#4F6FD8]/20 cursor-pointer">
+              className="text-xs bg-gray-50 border-0 rounded-lg px-2.5 py-1.5 text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#9CD4C1]/20 cursor-pointer">
               <option value="6m">Last 6 months</option>
               <option value="12m">Last 12 months</option>
               <option value="24m">Last 24 months</option>
@@ -2176,24 +2324,21 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
           </div>
           <div style={{ height: 190 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={usageData} margin={{ top: 4, right: 4, bottom: 0, left: -24 }}>
-                <defs>
-                  <linearGradient id="usageGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#4F6FD8" stopOpacity={0.12} />
-                    <stop offset="100%" stopColor="#4F6FD8" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
+              <LineChart data={usageData} margin={{ top: 4, right: 4, bottom: 0, left: -24 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{ fontSize: 12, borderRadius: 10, border: "none", boxShadow: "0 8px 24px rgba(0,0,0,0.10)", padding: "8px 12px" }}
                   labelStyle={{ fontWeight: 600, color: "#1f2937" }}
-                  cursor={{ stroke: "#4F6FD8", strokeWidth: 1, strokeDasharray: "4 2" }}
+                  cursor={{ stroke: "#9CD4C1", strokeWidth: 1, strokeDasharray: "4 2" }}
                 />
-                <Area type="monotone" dataKey="value" stroke="#4F6FD8" strokeWidth={2.5} fill="url(#usageGrad)"
-                  dot={false} activeDot={{ r: 4, fill: "#4F6FD8", stroke: "#fff", strokeWidth: 2 }} />
-              </AreaChart>
+                <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: 10, paddingTop: 8 }} />
+                <Line type="monotone" dataKey="Restorative" stroke="#68C5A5" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Disposables" stroke="#6DBBD4" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Impression" stroke="#F0C064" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="Preventive" stroke="#B09FDC" strokeWidth={2} dot={false} />
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
@@ -2240,7 +2385,7 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-gray-900">Out of Stock</p>
             <button onClick={() => onNavigateWithStatusFilter("Out of Stock")}
-              className="text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors flex items-center gap-0.5">
+              className="text-xs font-semibold text-[#3F7665] hover:text-[#315F52] transition-colors flex items-center gap-0.5">
               View All <ArrowRight size={11} />
             </button>
           </div>
@@ -2267,7 +2412,7 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-gray-900">Low Stock Alerts</p>
             <button onClick={() => onNavigateWithStatusFilter("Low Stock")}
-              className="text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors flex items-center gap-0.5">
+              className="text-xs font-semibold text-[#3F7665] hover:text-[#315F52] transition-colors flex items-center gap-0.5">
               View All <ArrowRight size={11} />
             </button>
           </div>
@@ -2297,7 +2442,7 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold text-gray-900">Expiring Soon</p>
             <button onClick={() => onNavigateWithStatusFilter("Low Stock")}
-              className="text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors flex items-center gap-0.5">
+              className="text-xs font-semibold text-[#3F7665] hover:text-[#315F52] transition-colors flex items-center gap-0.5">
               View All <ArrowRight size={11} />
             </button>
           </div>
@@ -2332,14 +2477,14 @@ function DashboardPage({ items, onNavigateToInventory, onNavigateWithStatusFilte
 // ─── AnalyticsPage ────────────────────────────────────────────────────────────
 
 const ANLX_CAT_COLORS: Record<string, string> = {
-  Restorative: "#4F6FD8", Disposables: "#10b981", PPE: "#f59e0b", Impression: "#8b5cf6", Anesthetics: "#ef4444",
+  Restorative: "#6DBBD4", Disposables: "#68C5A5", PPE: "#F0C064", Impression: "#B09FDC", Anesthetics: "#ED8985",
 };
 const ANLX_BREAKDOWN = [
-  { name: "Disposables", value: 38, color: "#10b981" },
-  { name: "PPE", value: 24, color: "#f59e0b" },
-  { name: "Restorative", value: 17, color: "#4F6FD8" },
-  { name: "Impression", value: 12, color: "#8b5cf6" },
-  { name: "Anesthetics", value: 9, color: "#ef4444" },
+  { name: "Disposables", value: 38, color: "#68C5A5" },
+  { name: "PPE", value: 24, color: "#F0C064" },
+  { name: "Restorative", value: 17, color: "#6DBBD4" },
+  { name: "Impression", value: 12, color: "#B09FDC" },
+  { name: "Anesthetics", value: 9, color: "#ED8985" },
 ];
 const ANLX_TREND_6M = [
   { month: "Feb", Restorative: 42, Disposables: 96, PPE: 58, Impression: 24, Anesthetics: 13 },
@@ -2382,7 +2527,7 @@ const ANLX_PRIORITY_CFG = {
   High:    { color: "#ef4444", bg: "#fef2f2", label: "High Priority",   tip: "Out of Stock: Current Quantity = 0" },
   Medium:  { color: "#f97316", bg: "#fff7ed", label: "Medium Priority", tip: "Reorder Now: Current Quantity ≤ Minimum Quantity" },
   Soon:    { color: "#f59e0b", bg: "#fffbeb", label: "Reorder Soon",    tip: "Predicted to reach Minimum Quantity within 14 days" },
-  Planned: { color: "#4F6FD8", bg: "#F2F5FF", label: "Planned",         tip: "Predicted to reach Minimum Quantity in 15–30 days" },
+  Planned: { color: "#3F7665", bg: "#EFF8F4", label: "Planned",         tip: "Predicted to reach Minimum Quantity in 15–30 days" },
 } as const;
 type PriorityKey = keyof typeof ANLX_PRIORITY_CFG;
 
@@ -2398,7 +2543,7 @@ function PriorityBadge({ p }: { p: string }) {
 // Static AI insight cards — mock data, coming soon
 const PRED_INSIGHTS = [
   {
-    color: "#4F6FD8", initial: "C",
+    color: "#3F7665", initial: "C",
     name: "Composite A2",
     insight: "Qty is low in 8 days. Recommend ordering to avoid stockout.",
     reorder: 20,
@@ -2512,7 +2657,7 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
         <div className="flex items-center gap-2.5">
           <label className="text-sm font-medium text-gray-500">Analysis Month</label>
           <input type="month" value={analysisMonth} onChange={(e) => setAnalysisMonth(e.target.value)}
-            className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 bg-white" />
+            className="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 bg-white" />
         </div>
       </div>
 
@@ -2521,8 +2666,8 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
         <div className={`${CARD} p-5`}>
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Monthly Consumption</span>
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: "#F2F5FF" }}>
-              <Package size={17} style={{ color: "#4F6FD8" }} />
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: "#EFF8F4" }}>
+              <Package size={17} style={{ color: "#3F7665" }} />
             </div>
           </div>
           <p className="text-[1.65rem] font-bold text-gray-900 leading-none mb-1.5">406 <span className="text-base font-semibold text-gray-400">units</span></p>
@@ -2552,7 +2697,7 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
             </div>
           </div>
           <p className="text-[1.65rem] font-bold text-gray-900 leading-none mb-1.5">{reachingReorder || 18}</p>
-          <button onClick={onNavigateToInventory} className="text-xs font-medium text-[#4F6FD8] hover:underline">
+          <button onClick={onNavigateToInventory} className="text-xs font-medium text-[#3F7665] hover:underline">
             View in Inventory →
           </button>
         </div>
@@ -2780,7 +2925,7 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
                       <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
                         style={{ backgroundColor: cfg.bg, color: cfg.color }}>{cfg.label}</span>
                       <button onClick={onNavigateToInventory}
-                        className="text-[11px] font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors">
+                        className="text-[11px] font-semibold text-[#3F7665] hover:text-[#315F52] transition-colors">
                         View
                       </button>
                     </div>
@@ -2789,7 +2934,7 @@ function AnalyticsPage({ items, onNavigateToInventory }: {
               })}
             </div>
             <button onClick={onNavigateToInventory}
-              className="mt-3 w-full text-center text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] transition-colors pt-2 border-t border-gray-100">
+              className="mt-3 w-full text-center text-xs font-semibold text-[#3F7665] hover:text-[#315F52] transition-colors pt-2 border-t border-gray-100">
               View all reorder priorities →
             </button>
           </div>
@@ -2891,7 +3036,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
 
   const ToggleSwitch = ({ on, onToggle }: { on: boolean; onToggle: () => void }) => (
     <button onClick={onToggle} className="relative flex-shrink-0 w-10 h-5.5 rounded-full transition-colors focus:outline-none"
-      style={{ backgroundColor: on ? "#4F6FD8" : "#d1d5db", height: "22px", width: "40px" }}>
+      style={{ backgroundColor: on ? "#9CD4C1" : "#d1d5db", height: "22px", width: "40px" }}>
       <span className="absolute top-0.5 rounded-full bg-white shadow transition-transform"
         style={{ width: 18, height: 18, left: 2, transform: on ? "translateX(18px)" : "translateX(0)" }} />
     </button>
@@ -2914,14 +3059,14 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
       className={`w-full px-3 py-2.5 text-sm rounded-lg border transition-all focus:outline-none ${
         readOnly
           ? "bg-gray-50 border-gray-100 text-gray-500 cursor-default"
-          : "bg-white border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 text-gray-900"
+          : "bg-white border-gray-200 focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 text-gray-900"
       }`} />
   );
 
   const SaveBtn = ({ onClick, saved, label = "Save Changes" }: { onClick: () => void; saved: boolean; label?: string }) => (
     <button onClick={onClick}
       className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-colors"
-      style={{ backgroundColor: saved ? "#10b981" : "#4F6FD8", color: "#fff" }}>
+      style={{ backgroundColor: saved ? "#10b981" : "#9CD4C1", color: saved ? "#fff" : "#214A3F" }}>
       {saved ? <><CheckCheck size={15} /> Saved</> : label}
     </button>
   );
@@ -2944,9 +3089,9 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
       <div className="flex items-center gap-1 mb-6 border-b border-gray-200">
         {TABS.map((t) => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-5 py-2.5 text-sm font-medium transition-colors relative ${tab === t.id ? "text-[#4F6FD8]" : "text-gray-500 hover:text-gray-700"}`}>
+            className={`px-5 py-2.5 text-sm font-medium transition-colors relative ${tab === t.id ? "text-[#3F7665]" : "text-gray-500 hover:text-gray-700"}`}>
             {t.label}
-            {tab === t.id && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4F6FD8] rounded-full" />}
+            {tab === t.id && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9CD4C1] rounded-full" />}
           </button>
         ))}
       </div>
@@ -2979,7 +3124,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
             <div className="space-y-4">
               <SField label="Region / Country">
                 <select value={region} onChange={(e) => setRegion(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 focus:outline-none text-gray-900 bg-white">
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 focus:outline-none text-gray-900 bg-white">
                   {["United States", "Canada", "United Kingdom", "Australia", "Singapore", "Other"].map((r) => (
                     <option key={r}>{r}</option>
                   ))}
@@ -2987,7 +3132,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
               </SField>
               <SField label="Timezone">
                 <select value={timezone} onChange={(e) => setTimezone(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 focus:outline-none text-gray-900 bg-white">
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 focus:outline-none text-gray-900 bg-white">
                   {[
                     ["America/Toronto",     "Toronto (Eastern Time)"],
                     ["America/Los_Angeles", "Pacific Time (UTC−8)"],
@@ -3003,7 +3148,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
               </SField>
               <SField label="Currency">
                 <select value={currency} onChange={(e) => setCurrency(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 focus:outline-none text-gray-900 bg-white">
+                  className="w-full px-3 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 focus:outline-none text-gray-900 bg-white">
                   {["USD", "CAD", "GBP", "AUD", "SGD", "EUR"].map((c) => (
                     <option key={c}>{c}</option>
                   ))}
@@ -3059,7 +3204,7 @@ function SettingsPage({ initialTab = "general" }: { initialTab?: SettingsTab }) 
                       <div className="flex items-center gap-2">
                         <input value={notifEmailAddr}
                           onChange={(e) => { setNotifEmailAddr(e.target.value); setNotifEmailPending(true); }}
-                          className="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 focus:outline-none text-gray-900"
+                          className="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 focus:outline-none text-gray-900"
                           placeholder="notifications@example.com" />
                       </div>
                       {notifEmailPending && (
@@ -3183,7 +3328,7 @@ const HELP_FAQS = [
   },
   {
     q: "Why can't I edit my email address?",
-    a: "Email addresses are managed at the account level and cannot be changed by individual users. Please contact your clinic administrator or reach out to Hexace Support.",
+    a: "Email addresses are managed at the account level and cannot be changed by individual users. Please contact your clinic administrator or reach out to HexaDent Support.",
   },
 ];
 
@@ -3194,17 +3339,17 @@ function HelpPage({ onBack }: { onBack: () => void }) {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-[#4F6FD8] transition-colors mb-4">
+          <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-[#3F7665] transition-colors mb-4">
             <ChevronLeft size={15} /> Back
           </button>
           <h1 className="text-2xl font-bold text-gray-900">Help & Support</h1>
-          <p className="text-sm text-gray-500 mt-1">Find answers to common questions about Hexace.</p>
+          <p className="text-sm text-gray-500 mt-1">Find answers to common questions about HexaDent.</p>
         </div>
 
         {/* Search hint banner */}
-        <div className="flex items-start gap-3 p-4 rounded-2xl bg-[#F2F5FF] mb-6">
-          <HelpCircle size={18} className="text-[#4F6FD8] flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-[#4F6FD8] font-medium leading-snug">
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-[#EFF8F4] mb-6">
+          <HelpCircle size={18} className="text-[#3F7665] flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-[#3F7665] font-medium leading-snug">
             Browse the FAQs below or contact our support team directly if you need further assistance.
           </p>
         </div>
@@ -3216,7 +3361,7 @@ function HelpPage({ onBack }: { onBack: () => void }) {
               <button
                 onClick={() => setOpenIdx(openIdx === i ? null : i)}
                 className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-gray-50/60 transition-colors">
-                <span className={`text-sm font-medium leading-snug ${openIdx === i ? "text-[#4F6FD8]" : "text-gray-800"}`}>{faq.q}</span>
+                <span className={`text-sm font-medium leading-snug ${openIdx === i ? "text-[#3F7665]" : "text-gray-800"}`}>{faq.q}</span>
                 <span className="flex-shrink-0 text-gray-400">
                   {openIdx === i ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </span>
@@ -3232,18 +3377,18 @@ function HelpPage({ onBack }: { onBack: () => void }) {
 
         {/* Contact support */}
         <div className={`${CARD} p-6 flex flex-col items-center text-center gap-3`}>
-          <div className="w-11 h-11 rounded-2xl bg-[#F2F5FF] flex items-center justify-center">
-            <HelpCircle size={20} className="text-[#4F6FD8]" />
+          <div className="w-11 h-11 rounded-2xl bg-[#EFF8F4] flex items-center justify-center">
+            <HelpCircle size={20} className="text-[#3F7665]" />
           </div>
           <div>
             <p className="text-sm font-semibold text-gray-900">Still need help?</p>
             <p className="text-xs text-gray-400 mt-0.5">Our support team is happy to assist you.</p>
           </div>
-          <a href="mailto:support@hexace.io"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4F6FD8] text-white text-sm font-semibold hover:bg-[#3F5FC2] transition-colors">
+          <a href="mailto:support@hexadent.com"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#9CD4C1] text-[#214A3F] text-sm font-semibold hover:bg-[#86BFAE] transition-colors">
             Contact Support
           </a>
-          <p className="text-xs text-gray-400">support@hexace.io</p>
+          <p className="text-xs text-gray-400">support@hexadent.com</p>
         </div>
       </div>
     </main>
@@ -3323,7 +3468,7 @@ function ImportHistoryModal({ onClose }: { onClose: () => void }) {
             onDragLeave={() => setDragging(false)}
             onDrop={handleDrop}
             onClick={() => inputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${dragging ? "border-[#4F6FD8] bg-blue-50" : "border-gray-200 hover:border-[#4F6FD8] hover:bg-blue-50/40"}`}
+            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${dragging ? "border-[#9CD4C1] bg-blue-50" : "border-gray-200 hover:border-[#9CD4C1] hover:bg-blue-50/40"}`}
           >
             <input
               ref={inputRef}
@@ -3333,8 +3478,8 @@ function ImportHistoryModal({ onClose }: { onClose: () => void }) {
               className="hidden"
               onChange={(e) => addFiles(e.target.files)}
             />
-            <Upload size={28} className={`mx-auto mb-3 ${dragging ? "text-[#4F6FD8]" : "text-gray-300"}`} />
-            <p className="text-sm font-medium text-gray-700">Drop files here, or <span className="text-[#4F6FD8]">browse</span></p>
+            <Upload size={28} className={`mx-auto mb-3 ${dragging ? "text-[#3F7665]" : "text-gray-300"}`} />
+            <p className="text-sm font-medium text-gray-700">Drop files here, or <span className="text-[#3F7665]">browse</span></p>
             <p className="text-xs text-gray-400 mt-1">PNG, JPG, JPEG, WEBP, PDF — up to 20 MB each</p>
           </div>
 
@@ -3369,7 +3514,7 @@ function ImportHistoryModal({ onClose }: { onClose: () => void }) {
           <button
             onClick={handleUpload}
             disabled={!files.length || uploading}
-            className="px-4 py-2 text-sm font-semibold text-white bg-[#4F6FD8] rounded-lg hover:bg-[#3F5FC2] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+            className="px-4 py-2 text-sm font-semibold text-[#214A3F] bg-[#9CD4C1] rounded-lg hover:bg-[#86BFAE] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
             {uploading ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />Uploading…</> : <><Upload size={15} />Upload {files.length > 0 ? `(${files.length})` : ""}</>}
           </button>
         </div>
@@ -3435,7 +3580,7 @@ function NewPurchaseListModal({ onClose, onCreate }: {
               placeholder="e.g. August Restock"
               className={`w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none transition-all ${
                 error ? "border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100"
-                : "border-gray-200 focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10"}`}
+                : "border-gray-200 focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10"}`}
             />
             {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
           </div>
@@ -3444,12 +3589,12 @@ function NewPurchaseListModal({ onClose, onCreate }: {
             <textarea value={notes} onChange={(e) => setNotes(e.target.value)}
               placeholder="Describe what this list is for..."
               rows={3}
-              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 transition-all resize-none" />
+              className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 transition-all resize-none" />
           </div>
         </div>
         <div className="px-6 py-4 border-t border-gray-100 flex gap-2 justify-end">
           <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
-          <button onClick={handleCreate} className="px-4 py-2 text-sm bg-[#4F6FD8] text-white rounded-lg hover:bg-[#3F5FC2] transition-colors font-medium">
+          <button onClick={handleCreate} className="px-4 py-2 text-sm bg-[#9CD4C1] text-[#214A3F] rounded-lg hover:bg-[#86BFAE] transition-colors font-medium">
             Create List
           </button>
         </div>
@@ -3587,7 +3732,7 @@ function PurchaseListCard({ list, onRename, onComplete, onDelete, onOpen }: {
 
           {/* Progress bar */}
           <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[#4F6FD8] rounded-full transition-all duration-500"
+            <div className="h-full bg-[#9CD4C1] rounded-full transition-all duration-500"
               style={{ width: `${pct}%` }} />
           </div>
         </div>
@@ -3613,7 +3758,7 @@ function PurchaseListCard({ list, onRename, onComplete, onDelete, onOpen }: {
         {/* Footer — click to open detail */}
         <div className="border-t border-gray-50">
           <button onClick={() => onOpen(list.id)}
-            className="w-full flex items-center justify-center gap-1.5 px-5 py-3 text-xs font-medium text-[#4F6FD8] hover:bg-[#F2F5FF] transition-colors rounded-b-2xl">
+            className="w-full flex items-center justify-center gap-1.5 px-5 py-3 text-xs font-medium text-[#3F7665] hover:bg-[#EFF8F4] transition-colors rounded-b-2xl">
             View Items <ArrowRight size={12} />
           </button>
         </div>
@@ -3631,9 +3776,9 @@ function NewListCreatedBanner({ listName, onDismiss, onGoToInventory }: {
   listName: string; onDismiss: () => void; onGoToInventory: () => void;
 }) {
   return (
-    <div className="bg-[#F2F5FF] border border-[#4F6FD8]/20 rounded-xl px-5 py-4 flex items-center gap-4">
-      <div className="w-9 h-9 bg-[#4F6FD8] rounded-xl flex items-center justify-center flex-shrink-0">
-        <CheckCheck size={18} className="text-white" />
+    <div className="bg-[#EFF8F4] border border-[#9CD4C1]/20 rounded-xl px-5 py-4 flex items-center gap-4">
+      <div className="w-9 h-9 bg-[#9CD4C1] rounded-xl flex items-center justify-center flex-shrink-0">
+        <CheckCheck size={18} className="text-[#214A3F]" />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-gray-900">"{listName}" created!</p>
@@ -3641,7 +3786,7 @@ function NewListCreatedBanner({ listName, onDismiss, onGoToInventory }: {
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         <button onClick={onGoToInventory}
-          className="flex items-center gap-1.5 px-3 py-2 bg-[#4F6FD8] text-white text-xs font-medium rounded-lg hover:bg-[#3F5FC2] transition-colors">
+          className="flex items-center gap-1.5 px-3 py-2 bg-[#9CD4C1] text-[#214A3F] text-xs font-medium rounded-lg hover:bg-[#86BFAE] transition-colors">
           Browse Inventory <ArrowRight size={12} />
         </button>
         <button onClick={onDismiss} className="text-gray-400 hover:text-gray-600 transition-colors"><X size={16} /></button>
@@ -3709,7 +3854,7 @@ function PurchaseListsPage({ purchaseLists, setPurchaseLists, onNavigateToInvent
           <p className="text-sm text-gray-500 mt-1">Create and track purchase lists to manage incoming inventory</p>
         </div>
         <button onClick={() => setShowNewModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#4F6FD8] text-white text-sm font-semibold rounded-lg hover:bg-[#3F5FC2] transition-colors shadow-sm">
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#9CD4C1] text-[#214A3F] text-sm font-semibold rounded-lg hover:bg-[#86BFAE] transition-colors shadow-sm">
           <Plus size={16} /> New Purchase List
         </button>
       </div>
@@ -3730,12 +3875,12 @@ function PurchaseListsPage({ purchaseLists, setPurchaseLists, onNavigateToInvent
         <div className="flex items-center gap-1 border-b border-gray-200 flex-1">
           {(["Active", "Completed"] as const).map((t) => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-2.5 text-sm font-medium relative transition-colors flex items-center gap-2 ${tab === t ? "text-[#4F6FD8]" : "text-gray-500 hover:text-gray-700"}`}>
+              className={`px-4 py-2.5 text-sm font-medium relative transition-colors flex items-center gap-2 ${tab === t ? "text-[#3F7665]" : "text-gray-500 hover:text-gray-700"}`}>
               {t}
-              <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${tab === t ? "bg-[#4F6FD8]/10 text-[#4F6FD8]" : "bg-gray-100 text-gray-400"}`}>
+              <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${tab === t ? "bg-[#9CD4C1]/10 text-[#3F7665]" : "bg-gray-100 text-gray-400"}`}>
                 {t === "Active" ? activeCount : completedCount}
               </span>
-              {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4F6FD8] rounded-full" />}
+              {tab === t && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9CD4C1] rounded-full" />}
             </button>
           ))}
         </div>
@@ -3743,7 +3888,7 @@ function PurchaseListsPage({ purchaseLists, setPurchaseLists, onNavigateToInvent
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input type="text" placeholder="Search purchase lists..." value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#4F6FD8] focus:ring-2 focus:ring-[#4F6FD8]/10 bg-white" />
+            className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#9CD4C1] focus:ring-2 focus:ring-[#9CD4C1]/10 bg-white" />
         </div>
       </div>
 
@@ -3756,7 +3901,7 @@ function PurchaseListsPage({ purchaseLists, setPurchaseLists, onNavigateToInvent
           </p>
           {!search && tab === "Active" && (
             <button onClick={() => setShowNewModal(true)}
-              className="mt-4 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#4F6FD8] border border-[#4F6FD8]/30 rounded-lg hover:bg-[#4F6FD8]/5 transition-colors">
+              className="mt-4 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#3F7665] border border-[#9CD4C1]/30 rounded-lg hover:bg-[#9CD4C1]/5 transition-colors">
               <Plus size={14} /> Create your first list
             </button>
           )}
@@ -3828,7 +3973,7 @@ function NotificationsDrawer({ notifications, onClose, onMarkAllRead, onClickNot
             <Bell size={17} className="text-gray-700" />
             <span className="text-base font-semibold text-gray-900">Notifications</span>
             {unread > 0 && (
-              <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold text-white bg-[#4F6FD8]">
+              <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[11px] font-bold text-[#214A3F] bg-[#9CD4C1]">
                 {unread}
               </span>
             )}
@@ -3836,7 +3981,7 @@ function NotificationsDrawer({ notifications, onClose, onMarkAllRead, onClickNot
           <div className="flex items-center gap-1">
             {unread > 0 && (
               <button onClick={onMarkAllRead}
-                className="text-xs font-semibold text-[#4F6FD8] hover:text-[#3F5FC2] px-2 py-1 rounded-lg hover:bg-[#F2F5FF] transition-colors">
+                className="text-xs font-semibold text-[#3F7665] hover:text-[#315F52] px-2 py-1 rounded-lg hover:bg-[#EFF8F4] transition-colors">
                 Mark all as read
               </button>
             )}
@@ -3862,7 +4007,7 @@ function NotificationsDrawer({ notifications, onClose, onMarkAllRead, onClickNot
                 const cfg = NOTIF_CFG[n.type];
                 return (
                   <button key={n.id} onClick={() => onClickNotif(n)}
-                    className={`w-full text-left px-5 py-4 border-b border-gray-50 last:border-0 transition-colors hover:brightness-95 ${n.read ? "bg-white" : "bg-[#F2F5FF]/60"}`}>
+                    className={`w-full text-left px-5 py-4 border-b border-gray-50 last:border-0 transition-colors hover:brightness-95 ${n.read ? "bg-white" : "bg-[#EFF8F4]/60"}`}>
                     <div className="flex items-start gap-3">
                       {/* Type icon */}
                       <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -3881,7 +4026,7 @@ function NotificationsDrawer({ notifications, onClose, onMarkAllRead, onClickNot
                       {/* Unread dot */}
                       <div className="flex-shrink-0 mt-1.5">
                         {!n.read ? (
-                          <span className="block w-2 h-2 rounded-full" style={{ backgroundColor: "#4F6FD8" }} />
+                          <span className="block w-2 h-2 rounded-full" style={{ backgroundColor: "#9CD4C1" }} />
                         ) : (
                           <span className="block w-2 h-2" />
                         )}
@@ -3901,6 +4046,7 @@ function NotificationsDrawer({ notifications, onClose, onMarkAllRead, onClickNot
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
+  const [productLine, setProductLine] = useState<ProductLine>("inventory");
   const [currentPage, setCurrentPage] = useState<AppPage>("dashboard");
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -3929,12 +4075,13 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
     setDetailItem(null);
     setActiveTab("items");
     setInventoryStatusFilter("All Status");
-    setInventoryPreFilter(item.sku || item.name);
+    setInventoryPreFilter(item.mfgNumber || item.name);
     setCurrentPage("inventory");
   };
 
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
+  const [catalogProductToAdd, setCatalogProductToAdd] = useState<CatalogProduct | null>(null);
   const [showImportModal, setShowImportModal] = useState(false);
   const [adjustItem, setAdjustItem] = useState<InventoryItem | null>(null);
   const [editItem, setEditItem] = useState<InventoryItem | null>(null);
@@ -3942,7 +4089,8 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
   const [removeItem, setRemoveItem] = useState<InventoryItem | null>(null);
   const [detailItem, setDetailItem] = useState<InventoryItem | null>(null);
 
-  const existingSkus = new Set(items.map((i) => i.sku));
+  const existingMfgNumbers = new Set(items.map((i) => i.mfgNumber));
+  const vendorOptions = Array.from(new Set(items.map((item) => item.vendor).filter(Boolean))).sort();
 
   // Mutate helpers
   const updateItem = (id: number, patch: Partial<InventoryItem>) => {
@@ -3965,14 +4113,15 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
     toast.success("Inventory information saved");
   };
 
-  const handleAdd = (name: string, fields: ClinicInventoryFields) => {
+  const handleAdd = (name: string, fields: ClinicInventoryFields, product?: CatalogProduct) => {
     const qty = parseInt(fields.quantity) || 0;
     const minQty = parseInt(fields.minQuantity) || 0;
     const newItem: InventoryItem = {
-      id: Date.now(), name, brand: "—", category: "—",
+      id: Date.now(), name, brand: product?.brand || "—", category: product?.category || "—",
       quantity: qty, minQuantity: minQty, unit: "Unit",
-      location: fields.location, sku: `MAN-${Date.now()}`,
-      barcode: "—", preferredSupplier: fields.preferredSupplier,
+      location: fields.location, mfgNumber: product?.mfgNumber || `MAN-${Date.now()}`,
+      barcode: product?.barcode || "—", vendor: fields.vendor,
+      vendorItemNumber: fields.vendorItemNumber,
       purchasePrice: fields.purchasePrice, expiryDate: fields.expiryDate,
       internalNote: fields.internalNote, lastUpdated: "Jul 29",
     };
@@ -3981,8 +4130,8 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
     toast.success(`${name} added to inventory`);
   };
 
-  const handleAdjustBySku = (sku: string) => {
-    const item = items.find((i) => i.sku === sku);
+  const handleAdjustByMfgNumber = (mfgNumber: string) => {
+    const item = items.find((i) => i.mfgNumber === mfgNumber);
     if (item) setAdjustItem(item);
   };
 
@@ -4055,6 +4204,8 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
       {sidebarOpen && (
         <Sidebar
           currentPage={currentPage}
+          productLine={productLine}
+          onSelectProductLine={(line) => { setProductLine(line); setShowNotifDrawer(false); }}
           onNavigate={(p) => { setCurrentPage(p); if (p === "settings") setSettingsInitialTab("general"); }}
           onNavigateSettings={(tab) => { setSettingsInitialTab(tab); setCurrentPage("settings"); }}
           onSignOut={onSignOut}
@@ -4068,8 +4219,10 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
           onOpenHelp={() => setCurrentPage("help")}
         />
 
+        {productLine !== "inventory" && <ProductLineComingSoon productLine={productLine} />}
+
         {/* Dashboard page */}
-        {currentPage === "dashboard" && (
+        {productLine === "inventory" && currentPage === "dashboard" && (
           <DashboardPage
             items={items}
             onNavigateToInventory={() => setCurrentPage("inventory")}
@@ -4077,19 +4230,27 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
           />
         )}
 
+        {/* Product Library page */}
+        {productLine === "inventory" && currentPage === "product-library" && (
+          <ProductLibraryPage
+            existingMfgNumbers={existingMfgNumbers}
+            onAddProduct={(product) => { setCatalogProductToAdd(product); setShowAddModal(true); }}
+          />
+        )}
+
         {/* Analytics page */}
-        {currentPage === "analytics" && (
+        {productLine === "inventory" && currentPage === "analytics" && (
           <AnalyticsPage items={items} onNavigateToInventory={() => setCurrentPage("inventory")} />
         )}
 
         {/* Settings page */}
-        {currentPage === "settings" && <SettingsPage initialTab={settingsInitialTab} />}
+        {productLine === "inventory" && currentPage === "settings" && <SettingsPage initialTab={settingsInitialTab} />}
 
         {/* Help page */}
-        {currentPage === "help" && <HelpPage onBack={() => setCurrentPage("dashboard")} />}
+        {productLine === "inventory" && currentPage === "help" && <HelpPage onBack={() => setCurrentPage("dashboard")} />}
 
         {/* Purchase Lists page */}
-        {currentPage === "purchase-lists" && (
+        {productLine === "inventory" && currentPage === "purchase-lists" && (
           <PurchaseListsPage
             purchaseLists={purchaseLists}
             setPurchaseLists={setPurchaseLists}
@@ -4099,7 +4260,7 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
         )}
 
         {/* Purchase List detail */}
-        {currentPage === "purchase-list-detail" && (() => {
+        {productLine === "inventory" && currentPage === "purchase-list-detail" && (() => {
           const list = purchaseLists.find((l) => l.id === selectedListId);
           if (!list) return null;
           return (
@@ -4115,7 +4276,7 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
         })()}
 
         {/* Inventory page */}
-        {currentPage === "inventory" && (
+        {productLine === "inventory" && currentPage === "inventory" && (
         <main className="flex-1 overflow-y-auto px-8 py-6">
           {/* Page header */}
           <div className="flex items-start justify-between mb-6">
@@ -4124,14 +4285,14 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
               <p className="text-sm text-gray-500 mt-1">Manage your clinic inventory and stock levels</p>
             </div>
             {activeTab === "items" ? (
-              <button onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#4F6FD8] text-white text-sm font-semibold rounded-lg hover:bg-[#3F5FC2] transition-colors shadow-sm">
+              <button onClick={() => { setCatalogProductToAdd(null); setShowAddModal(true); }}
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#9CD4C1] text-[#214A3F] text-sm font-semibold rounded-lg hover:bg-[#86BFAE] transition-colors shadow-sm">
                 <PackagePlus size={16} /> Add Inventory Item
               </button>
             ) : (
               <button
                 onClick={() => setShowImportModal(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#4F6FD8] text-white text-sm font-semibold rounded-lg hover:bg-[#3F5FC2] transition-colors shadow-sm">
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#9CD4C1] text-[#214A3F] text-sm font-semibold rounded-lg hover:bg-[#86BFAE] transition-colors shadow-sm">
                 <Upload size={16} /> Import History
               </button>
             )}
@@ -4141,9 +4302,9 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
           <div className="flex items-center gap-1 mb-6 border-b border-gray-200">
             {(["items", "activity"] as const).map((tab) => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2.5 text-sm font-medium transition-colors relative capitalize ${activeTab === tab ? "text-[#4F6FD8]" : "text-gray-500 hover:text-gray-700"}`}>
+                className={`px-4 py-2.5 text-sm font-medium transition-colors relative capitalize ${activeTab === tab ? "text-[#3F7665]" : "text-gray-500 hover:text-gray-700"}`}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                {activeTab === tab && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#4F6FD8] rounded-full" />}
+                {activeTab === tab && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#9CD4C1] rounded-full" />}
               </button>
             ))}
           </div>
@@ -4205,7 +4366,7 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
       )}
 
       {editItem && (
-        <EditInventoryModal item={editItem} onClose={() => setEditItem(null)}
+        <EditInventoryModal item={editItem} vendorOptions={vendorOptions} onClose={() => setEditItem(null)}
           onSave={(patch) => handleEdit(editItem, patch)} />
       )}
 
@@ -4225,10 +4386,13 @@ export default function InventoryApp({ onSignOut }: { onSignOut: () => void }) {
 
       {showAddModal && (
         <AddInventoryModal
-          existingSkus={existingSkus}
-          onClose={() => setShowAddModal(false)}
+          existingMfgNumbers={existingMfgNumbers}
+          vendorOptions={vendorOptions}
+          initialProduct={catalogProductToAdd}
+          directConfigure={catalogProductToAdd !== null}
+          onClose={() => { setShowAddModal(false); setCatalogProductToAdd(null); }}
           onAdd={handleAdd}
-          onAdjust={(sku) => { handleAdjustBySku(sku); setShowAddModal(false); }}
+          onAdjust={(mfgNumber) => { handleAdjustByMfgNumber(mfgNumber); setShowAddModal(false); setCatalogProductToAdd(null); }}
         />
       )}
 

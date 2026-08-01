@@ -2,19 +2,19 @@
 
 :root {
   --font-size: 16px;
-  --background: #f7f8fa;
+  --background: #f5faf8;
   --foreground: #1f2937;
   --card: #ffffff;
   --card-foreground: #1f2937;
   --popover: #ffffff;
   --popover-foreground: #1f2937;
-  --primary: #4F6FD8;
-  --primary-foreground: #ffffff;
-  --secondary: #F2F5FF;
+  --primary: #9CD4C1;
+  --primary-foreground: #214a3f;
+  --secondary: #EFF8F4;
   --secondary-foreground: #1f2937;
   --muted: #f3f4f6;
   --muted-foreground: #6b7280;
-  --accent: #F2F5FF;
+  --accent: #EFF8F4;
   --accent-foreground: #1f2937;
   --destructive: #b42318;
   --destructive-foreground: #ffffff;
@@ -24,7 +24,7 @@
   --switch-background: #cbced4;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: #4F6FD8;
+  --ring: #9CD4C1;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);

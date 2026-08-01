@@ -34,7 +34,7 @@ export default function Component01InventoryItems() {
       <div className="absolute bg-[#4F6FD8] h-[3px] left-[280px] top-[216px] w-[42px]" data-name="Rectangle" />
       <div className="absolute bg-[#e5e7eb] h-px left-[280px] top-[220px] w-[1080px]" data-name="Rectangle" />
       <div className="absolute bg-white border border-[#d1d5db] border-solid h-[40px] left-[280px] rounded-[8px] top-[248px] w-[340px]" data-name="Rectangle" />
-      <p className="[word-break:break-word] absolute font-['Inter:Regular',sans-serif] font-normal leading-[normal] left-[296px] not-italic text-[#9ca3af] text-[13px] top-[260px] whitespace-nowrap">Search by product, brand, SKU, or barcode</p>
+      <p className="[word-break:break-word] absolute font-['Inter:Regular',sans-serif] font-normal leading-[normal] left-[296px] not-italic text-[#9ca3af] text-[13px] top-[260px] whitespace-nowrap">Search by product, brand, MFG Number, or barcode</p>
       <div className="absolute bg-white border border-[#d1d5db] border-solid h-[40px] left-[636px] rounded-[8px] top-[248px] w-[124px]" data-name="Rectangle" />
       <p className="[word-break:break-word] absolute font-['Inter:Regular',sans-serif] font-normal leading-[normal] left-[652px] not-italic text-[#1f2937] text-[13px] top-[260px] whitespace-nowrap">Category</p>
       <div className="absolute bg-white border border-[#d1d5db] border-solid h-[40px] left-[774px] rounded-[8px] top-[248px] w-[128px]" data-name="Rectangle" />

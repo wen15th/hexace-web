@@ -30,7 +30,7 @@ Add:
 Search should actually support:
 
 * Product Name
-* SKU
+* MFG Number
 * Barcode
 
 Fix the empty filtered result and pagination logic. Never display states such as “Page 1 of 0” or “Showing 1–0”.
@@ -56,7 +56,7 @@ The drawer should include:
 * Product Name
 * Brand
 * Category
-* SKU
+* MFG Number
 * Barcode
 * Unit
 * Product image, if available
@@ -67,7 +67,7 @@ The drawer should include:
 * Inventory Status
 * Minimum Quantity
 * Location
-* Preferred Supplier
+* Vendor
 * Purchase Price
 * Expiry information, if applicable
 
@@ -139,7 +139,7 @@ Open an edit modal or drawer that allows clinic users to edit only clinic-level 
 
 * Minimum Quantity
 * Location
-* Preferred Supplier
+* Vendor
 * Purchase Price
 * Expiry information
 * Internal Note
@@ -150,7 +150,7 @@ Standard Product Library identity fields must remain read-only:
 * Brand
 * Category
 * Manufacturer
-* SKU
+* MFG Number
 * Barcode
 * Standard Unit
 
@@ -243,7 +243,7 @@ Users must be able to enter Manual Entry directly without first producing a “N
 
 ### Search Library tab
 
-* Search by Product Name, SKU, or Barcode
+* Search by Product Name, MFG Number, or Barcode
 * Select an existing Product Library product
 * Display Product Library information as read-only
 * Enter clinic inventory settings separately
@@ -273,7 +273,7 @@ Use:
 * Current Quantity
 * Minimum Quantity
 * Location
-* Preferred Supplier
+* Vendor
 * Purchase Price
 * Expiry information, if applicable
 
