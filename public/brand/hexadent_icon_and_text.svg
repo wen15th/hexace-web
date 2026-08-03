@@ -1,0 +1,23 @@
+<svg width="920" height="256" xmlns="http://www.w3.org/2000/svg" aria-labelledby="title desc" role="img">
+ <title id="title">HexaDent AI Inventory Platform</title>
+
+ <desc id="desc">HexaDent AI Inventory Platform horizontal logo in a mint-green modular identity.</desc>
+ <g>
+  <title>Layer 1</title>
+  <g id="svg_1" aria-label="HexaDent AI Inventory Platform mark">
+   <path id="svg_2" d="m235,15c5,0 9,1 12,3l24,15c13,7 13,19 0,27l-13,8l-46,0l-13,-8c-13,-8 -13,-20 0,-27l24,-15c3,-2 7,-3 12,-3z" fill="#2BBFA3"/>
+   <path id="svg_3" d="m235,244c5,0 9,-1 12,-3l24,-15c13,-7 13,-19 0,-27l-13,-8l-46,0l-13,8c-13,8 -13,20 0,27l24,15c3,2 7,3 12,3z" fill="#2BBFA3"/>
+   <rect id="svg_4" rx="11" fill="#2BBFA3" y="76" x="206" height="49" width="58"/>
+   <rect id="svg_5" rx="11" fill="#2BBFA3" y="134" x="206" height="49" width="58"/>
+   <path stroke="null" id="svg_6" d="m149,60.36364l18,-11.28571c6,-4.1039 10,-4.1039 13,0c2,3.07792 3,6.15584 3,10.25974l0,65.66234l-34,0c-8,0 -14,-6.15584 -14,-14.36364l0,-29.75325c0,-9.23377 5,-15.38961 14,-20.51948z" fill="#0F766E"/>
+   <path style="vector-effect: non-scaling-stroke;" stroke="null" id="svg_7" d="m135,133l48,0l0,66.49351c0,4.15584 -1,7.27273 -3,10.38961c-3,4.15584 -7,4.15584 -13,0l-18,-11.42857c-9,-5.19481 -14,-11.42857 -14,-20.77922l0,-44.67533z" fill="#0F766E"/>
+   <path stroke="null" id="svg_8" d="m321,60.36364l-18,-11.28571c-6,-4.1039 -10,-4.1039 -13,0c-2,3.07792 -3,6.15584 -3,10.25974l0,65.66234l34,0c8,0 14,-6.15584 14,-14.36364l0,-29.75325c0,-9.23377 -5,-15.38961 -14,-20.51948z" fill="#82E2CC"/>
+   <path stroke="null" id="svg_9" d="m335,134l-48,0l0,65.66234c0,4.1039 1,7.18182 3,10.25974c3,4.1039 7,4.1039 13,0l18,-11.28571c9,-5.12987 14,-11.28571 14,-20.51948l0,-44.11688z" fill="#82E2CC"/>
+   <circle id="svg_10" fill="#fff" r="23" cy="179" cx="297"/>
+   <circle id="svg_11" fill="#2BBFA3" r="16" cy="179" cx="297"/>
+  </g>
+  <g id="svg_12" font-family="Inter, Avenir Next, Helvetica Neue, Arial, sans-serif" fill="#14211F">
+   <text id="svg_13" letter-spacing="-3" font-weight="700" font-size="88" y="156" x="368">HexaDent</text>
+  </g>
+ </g>
+</svg>

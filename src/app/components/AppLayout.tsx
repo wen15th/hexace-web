@@ -49,8 +49,8 @@ export function Sidebar({
 
   return (
     <aside className="sticky top-0 flex h-screen w-60 flex-shrink-0 flex-col border-r border-gray-200 bg-white">
-      <div className="border-b border-gray-100 px-4 py-3">
-        <div className="mb-3 grid grid-cols-3 gap-2" aria-label="HexaDent product lines">
+      <div className="border-b border-gray-100 px-4 pb-4 pt-3">
+        <div className="mb-4 grid grid-cols-3 gap-2" aria-label="HexaDent product lines">
           {([
             { id: "inventory" as const, label: "AI Inventory Platform", icon: <Boxes size={17} /> },
             { id: "organization" as const, label: "HexaDent Organization", icon: <Archive size={17} /> },
@@ -68,7 +68,7 @@ export function Sidebar({
             </button>
           ))}
         </div>
-        <div className="px-1">
+        <div className="px-2">
           <BrandLogo compact />
         </div>
       </div>

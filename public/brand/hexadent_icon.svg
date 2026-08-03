@@ -1,0 +1,23 @@
+<svg width="256" height="256" xmlns="http://www.w3.org/2000/svg" aria-labelledby="title desc" role="img">
+ <title id="title">HexaDent AI Inventory Platform mark</title>
+
+ <desc id="desc">Eight rounded inventory modules form a hexagonal H, with a mint AI node at the lower right.</desc>
+ <!-- Top and bottom modular caps -->
+ <!-- Enlarged center modules -->
+ <!-- Left inventory modules -->
+ <!-- Right inventory modules -->
+ <!-- Predictive replenishment node; white moat preserves legibility at small sizes -->
+ <g>
+  <title>Layer 1</title>
+  <path id="svg_1" d="m128,14c5,0 9,1 12,3l24,15c13,7 13,19 0,27l-13,8l-46,0l-13,-8c-13,-8 -13,-20 0,-27l24,-15c3,-2 7,-3 12,-3z" fill="#2BBFA3"/>
+  <path id="svg_2" d="m128,242c5,0 9,-1 12,-3l24,-15c13,-7 13,-19 0,-27l-13,-8l-46,0l-13,8c-13,8 -13,20 0,27l24,15c3,2 7,3 12,3z" fill="#2BBFA3"/>
+  <path stroke="null" id="svg_3" d="m99,85.22449c0,-6.09915 5.02283,-11.22449 11,-11.22449l36,0c5.97717,0 11,5.12534 11,11.22449l0,27.55102c0,6.09915 -5.02283,11.22449 -11,11.22449l-36,0c-5.97717,0 -11,-5.12534 -11,-11.22449l0,-27.55102z" opacity="undefined" fill="#2BBFA3"/>
+  <rect id="svg_4" rx="11" fill="#2BBFA3" y="133" x="99" height="49" width="58"/>
+  <path stroke="null" id="svg_5" d="m42,59.36364l18,-11.28571c6,-4.1039 10,-4.1039 13,0c2,3.07792 3,6.15584 3,10.25974l0,65.66234l-34,0c-8,0 -14,-6.15584 -14,-14.36364l0,-29.75325c0,-9.23377 5,-15.38961 14,-20.51948z" fill="#0F766E"/>
+  <path stroke="null" id="svg_6" d="m28,133l48,0l0,64.83117c0,4.05195 -1,7.09091 -3,10.12987c-3,4.05195 -7,4.05195 -13,0l-18,-11.14286c-9,-5.06494 -14,-11.14286 -14,-20.25974l0,-43.55844z" fill="#0F766E"/>
+  <path stroke="null" id="svg_7" d="m214,59.54545l-18,-11.42857c-6,-4.15584 -10,-4.15584 -13,0c-2,3.11688 -3,6.23377 -3,10.38961l0,66.49351l34,0c8,0 14,-6.23377 14,-14.54545l0,-30.12987c0,-9.35065 -5,-15.58442 -14,-20.77922z" fill="#82E2CC"/>
+  <path stroke="null" id="svg_8" d="m228,133l-48,0l0,65.66234c0,4.1039 1,7.18182 3,10.25974c3,4.1039 7,4.1039 13,0l18,-11.28571c9,-5.12987 14,-11.28571 14,-20.51948l0,-44.11688z" fill="#82E2CC"/>
+  <circle id="svg_9" fill="#fff" r="23" cy="177" cx="190"/>
+  <circle id="svg_10" fill="#2BBFA3" r="16" cy="177" cx="190"/>
+ </g>
+</svg>
